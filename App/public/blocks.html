@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conexión al Backend</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        table, th, td {
+            border: 1px solid black;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <h1>Datos desde el Backend</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Index</th>
+                <th>Data</th>
+            </tr>
+        </thead>
+        <tbody id="data"></tbody>
+    </table>
+    <script>
+        // Hacer una petición al endpoint del backend
+        fetch('http://localhost:3000/blocks')
+            .then(response => response.json())
+            .then(data => {
+                const tableBody = document.getElementById('data');
+                data.forEach(block => {
+                    const row = document.createElement('tr');
+                    const cellIndex = document.createElement('td');
+                    cellIndex.textContent = block.index;
+                    const cellData = document.createElement('td');
+                    cellData.textContent = block.data;
+                    row.appendChild(cellIndex);
+                    row.appendChild(cellData);
+                    tableBody.appendChild(row);
+                });
+            })
+            .catch(error => console.error('Error:', error));
+    </script>
+</body>
+</html>
+
