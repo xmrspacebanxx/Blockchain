@@ -17,6 +17,7 @@ class p2pServer{
         this.transactionPool = transactionPool;
         this.storePool = storePool;
         this.sockets = [];
+        this.retryInterval = 60000; // Intervalo de reintento de reconexi�n (5 segundos)
     }
 
     listen(){
@@ -26,11 +27,22 @@ class p2pServer{
         console.log('Listening for peer to peer connections on port ' + P2P_PORT);
     }
 
-    connectToPeers(){
+    connectToPeers() {
         peers.forEach(peer => {
-            const socket = new webSocket(peer);
-            socket.on('open', ()=> this.connectSocket(socket));
-        })
+            this.connectToPeer(peer);
+        });
+    }
+
+    connectToPeer(peer) {
+        const socket = new webSocket(peer);
+        socket.on('open', () => this.connectSocket(socket));
+        socket.on('close', () => this.handleDisconnect(peer));
+        socket.on('error', () => this.handleDisconnect(peer));
+    }
+
+    handleDisconnect(peer) {
+        console.log(`[-]Connection to peer ${peer} lost. Attempting to reconnect...`);
+        setTimeout(() => this.connectToPeer(peer), this.retryInterval);
     }
 
     connectSocket(socket){
@@ -39,6 +51,18 @@ class p2pServer{
         this.messageHandler(socket);
         this.sendChain(socket);
         this.sendItems(socket);
+
+        // Manejar eventos de cierre y error para sockets ya conectados
+        socket.on('close', () => this.handleSocketClose(socket));
+        socket.on('error', () => this.handleSocketClose(socket));
+    }
+
+    handleSocketClose(socket) {
+        const index = this.sockets.indexOf(socket);
+        if (index >= 0) {
+            this.sockets.splice(index, 1);
+            console.log('[-] Socket disconnected');
+        }
     }
 
     messageHandler(socket){
@@ -56,6 +80,7 @@ class p2pServer{
                     break;
                 case MESSAGE_TYPES.items:
                     this.storePool.replaceItems(data.items);
+                    break;
             }
         })
     }
