@@ -1,9 +1,11 @@
 
 const Transaction = require('../Wallet/transactions');
+const Wallet = require('../Wallet/index');
 
 class TransactionPool{
-    constructor(){
+    constructor(blockchain){
         this.transactions = [];
+        this.blockchain = blockchain;
     }
 
     updateAddTransaction(transaction){
@@ -19,20 +21,28 @@ class TransactionPool{
         return this.transactions.find(t => t && t.input && t.input.address === address);  
     }
 
-    validTransactions(){
+    validTransactions() {
         return this.transactions.filter(transaction => {
             const outputTotal = transaction.outputs.reduce((total, output) => {
                 return total + output.amount;
             }, 0);
-            if(transaction.input.amount !== outputTotal){
+            if (transaction.input.amount !== outputTotal) {
                 console.log(`Invalid transaction from ${transaction.input.address}`);
-                return;
+                return false;
             }
-            if(!Transaction.verifyTransaction(transaction)){
+            if (!Transaction.verifyTransaction(transaction)) {
                 console.log(`Invalid signature from ${transaction.input.address}`);
-                return;
+                return false;
             }
-            return transaction;
+
+            // Verificación del balance
+            const wallet = new Wallet();
+            const balance = wallet.calculateBalance(this.blockchain, transaction.input.address);
+            if (transaction.input.amount > balance) {
+                console.log(`Insufficient balance for transaction from ${transaction.input.address}`);
+                return false;
+            }
+            return true;
         });
     }
 

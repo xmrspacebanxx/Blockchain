@@ -3,173 +3,61 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Blockchain Interface</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-        }
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-        }
-        button {
-            margin: 5px;
-        }
-        .data {
-            white-space: pre-wrap;
-            background: #f4f4f4;
-            padding: 10px;
-            border: 1px solid #ddd;
-        }
-        .progress-bar {
-            width: 100%;
-            background: #f4f4f4;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            overflow: hidden;
-            margin-top: 10px;
-        }
-        .progress-bar-fill {
-            display: block;
-            height: 20px;
-            background-color: #4caf50;
-            width: 0;
-            transition: width 0.2s ease-in-out;
-        }
-    </style>
+    <title>MetaMask Clone</title>
+    <link rel="stylesheet" href="../public/css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
     <div class="container">
-        <h1>Blockchain Interface</h1>
+        <header>
+            <div class="wallet-info">
+                <div class="wallet-name">Space Wallet 6.0 <i class="fa-solid fa-meteor"></i></div>
+                <div class="wallet-actions">
+                    <i onclick="stopMining()" class="fa-solid fa-user-astronaut"></i> <!-- Icono de perfil -->
+                    <i onclick="startMining()" class="fa-solid fa-bolt"></i>
+                    <i class="fa-solid fa-bars"></i> <!-- Icono de menú -->
+                </div>
+            </div>
+            <div id="progress-container">
+                <div id="progress-bar">0%</div>
+            </div>
 
-        <h2>View Blocks</h2>
-        <button onclick="getBlocks()">Get Blocks</button>
-        <div id="blocks" class="data"></div>
+        </header>
+        
+        <nav id="buttons" style="display: none;">
+            <button class="tab active">Materials</button>
+            <button class="tab ">Transactions</button>
+        </nav>
+        
+        <main>
+            <div class="balance">
+                <div>
+                    <button onclick="getBalance()" id="balance-button"><i class="fa-solid fa-rotate-right"></i></button>
+                    <h1 id="balance" class="data">******</h1>
+                </div>
+            </div>
+            <div class="actions" id="actions">
+                <button onclick="send()"><i class="fa-solid fa-satellite-dish"></i> Send</button>
+                <button onclick="receive()"><i class="fa-solid fa-satellite"></i> Receive</button>
+                <button onclick="addSC()"><i class="fa-solid fa-barcode"></i> Add SC</button>
+                <button onclick="buy()"><i class="fa-solid fa-barcode"></i> Buy</button>
+            </div>
 
-        <h2>Create Transaction</h2>
-        <form id="transact-form" onsubmit="createTransaction(event)">
-            <label for="recipient">Recipient:</label>
-            <input type="text" id="recipient" name="recipient" required>
-            <label for="amount">Amount:</label>
-            <input type="number" id="amount" name="amount" required>
-            <button type="submit">Send</button>
-        </form>
-        <div id="transactions" class="data"></div>
-
-        <h2>Mine New Block</h2>
-        <form id="mine-form">
-            <label for="count">Number of Blocks:</label>
-            <input type="number" id="count" name="count" value="1" min="1" required>
-            <button type="submit">Mine Block</button>
-        </form>
-        <div class="progress-bar" id="progress-bar">
-            <span class="progress-bar-fill" id="progress-bar-fill"></span>
-            <pre id="mined-block"></pre>
-        </div>
-
-        <h2>Public Key</h2>
-        <button onclick="getPublicKey()">Get Public Key</button>
-        <div id="public-key" class="data"></div>
-
-        <h2>Balance</h2>
-        <button onclick="getBalance()">Get Balance</button>
-        <div id="balance" class="data"></div>
+            <div class="crypto-buy" id="crypto-buy">
+                <h3 class="Items">Store Pool
+                <button onclick="getItems()"><i class="fa-solid fa-rotate-right"></i></button></h3>
+                <div id="items" class="no-memo">Loading data...</div>
+            </div>
+        </main>
+        
+        <footer>
+            <button class="footer-btn" onclick="home()"><i class="fa-solid fa-wallet"></i>Home</button>
+            <button class="footer-btn" onclick="home()"><i class="fa-solid fa-bag-shopping"></i>Shopping</button>
+            <button class="footer-btn" onclick="buy()"><i class="fa-solid fa-meteor"></i>Store Pool</button>
+            <button class="footer-btn" onclick="book()"><i class="fa-solid fa-cubes"></i>Blockchain</button>
+            <button class="footer-btn" onclick="settings()"><i class="fa-solid fa-gear"></i>Settings</button>
+        </footer>
+        <script src="../public/js/app.js"></script>
     </div>
-
-    <script>
-        async function getBlocks() {
-            const response = await fetch('http://localhost:3000/blocks');
-            const data = await response.json();
-            document.getElementById('blocks').textContent = JSON.stringify(data, null, 2);
-        }
-
-        async function createTransaction(event) {
-            event.preventDefault();
-            const recipient = document.getElementById('recipient').value;
-            const amount = parseInt(document.getElementById('amount').value);
-            const response = await fetch('http://localhost:3000/transact', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ recipient, amount })
-            });
-            const data = await response.text();
-            document.getElementById('transactions').textContent = data;
-        }
-
-        async function mineBlock(count) {
-            try {
-                const progressBarFill = document.getElementById('progress-bar-fill');
-                progressBarFill.style.width = '0%';
-
-                const response = await fetch('http://localhost:3000/miner-transactions', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ count })
-                });
-
-                if (!response.body) {
-                    throw new Error('No readable stream available');
-                }
-
-                const reader = response.body.getReader();
-                const decoder = new TextDecoder();
-                let minedCount = 0;
-
-                while (true) {
-                    const { done, value } = await reader.read();
-                    if (done) break;
-
-                    const chunk = decoder.decode(value, { stream: true });
-                    const updates = chunk.trim().split('\n').map(line => JSON.parse(line));
-                    
-                    updates.forEach(update => {
-                        minedCount = update.minedCount;
-                        const block = update.block;
-
-                        progressBarFill.style.width = `${(minedCount / count) * 100}%`;
-                        document.getElementById('mined-block').textContent += JSON.stringify(block, null, 2) + '\n';
-                    });
-                }
-
-                alert('Bloques minados exitosamente');
-            } catch (error) {
-                console.error('Error mining block:', error);
-                alert('Error al minar bloques: ' + error.message);
-            }
-        }
-
-        document.getElementById('mine-form').addEventListener('submit', function(event) {
-            event.preventDefault();
-            const count = parseInt(document.getElementById('count').value, 10);
-            mineBlock(count);
-        });
-
-        document.getElementById('mine-form').addEventListener('submit', function(event) {
-            event.preventDefault();
-            const count = parseInt(document.getElementById('count').value, 10);
-            mineBlock(count);
-        });
-
-        async function getPublicKey() {
-            const response = await fetch('http://localhost:3000/public-key');
-            const data = await response.json();
-            document.getElementById('public-key').textContent = JSON.stringify(data, null, 2);
-        }
-
-        async function getBalance() {
-            const response = await fetch('http://localhost:3000/balance');
-            const data = await response.json();
-            document.getElementById('balance').textContent = JSON.stringify(data, null, 2);
-        }
-
-    </script>
 </body>
 </html>
-
-
-

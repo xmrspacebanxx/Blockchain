@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Online Store</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>Online Store</h1>
+    </header>
+
+    <section>
+        <h2>Add Item</h2>
+        <form id="add-item-form">
+            <label for="emoji">Item:</label>
+            <input type="text" id="emoji" name="emoji" required>
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name" required>
+            <label for="price">Price:</label>
+            <input type="number" id="price" name="price" required>
+            <label for="seller">Seller:</label>
+            <input type="text" id="seller" name="seller" required>
+            <button type="submit">Add Item</button>
+        </form>
+    </section>
+
+    <section>
+        <h2>Available Items</h2>
+        <ul id="available-items"></ul>
+    </section>
+
+    <section>
+        <h2>Buy Item</h2>
+        <form id="buy-item-form">
+            <label for="item-select">Select Item:</label>
+            <select id="item-select" name="item-select" required></select>
+            <label for="amount">Amount:</label>
+            <input type="number" id="amount" name="amount" required>
+            <button type="submit">Buy Item</button>
+        </form>
+    </section>
+
+    <section>
+        <h2>Wallet Items</h2>
+        <button id="load-wallet-items">Load Wallet Items</button>
+        <ul id="wallet-items"></ul>
+    </section>
+
+    <script src="../public/js/app.js"></script>
+</body>
+</html>

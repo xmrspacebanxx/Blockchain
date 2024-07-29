@@ -1,80 +1,312 @@
-document.getElementById('checkBalanceButton').addEventListener('click', async () => {
-    const publicKey = document.getElementById('publicKey').value;
+
+function home(){
+    const condition = true;
+    if(condition){
+        window.location.href = 'index.html';
+    }
+}
+function book(){
+    const condition = true;
+    if(condition){
+        window.location.href = 'blocks.html';
+    }
+}
+function buy(){
+    const condition = true;
+    if(condition){
+        window.location.href = 'buy.html'
+    }
+}
+function settings(){
+    const condition = true;
+    if(condition){
+        window.location.href = 'settings.html'
+    }
+}
+function send(){
+    const condition = true;
+    if(condition){
+        window.location.href = 'send.html'
+    }
+}
+function receive(){
+    const condition = true;
+    if(condition){
+        window.location.href = 'receive.html'
+    }
+}
+function addSC(){
+    const condition = true;
+    if(condition){
+        window.location.href = 'addSC.html'
+    }
+}
+
+async function getBlocks() {
     try {
-        const response = await fetch(`http://localhost:3000/balance?publicKey=${publicKey}`);
+        const response = await fetch('http://localhost:3000/blocks'); // Ajusta la URL según sea necesario
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
         const data = await response.json();
-        document.getElementById('balanceDisplay').innerText = `Balance: ${data}`;
+        return data;
     } catch (error) {
-        console.error(error);
-        document.getElementById('balanceDisplay').innerText = 'Error fetching balance';
+        console.error('Error fetching blocks:', error);
+        document.getElementById('blocks').textContent = 'Error loading blocks. Please try again later.';
     }
-});
+}
 
-document.getElementById('mineBlockButton').addEventListener('click', async () => {
+async function getBalance() {
+    const response = await fetch('http://localhost:3000/balance');
+    const data = await response.json();
+    document.getElementById('balance').textContent = JSON.stringify(data, null, 2);
+}
+
+async function createTransaction(event) {
+    event.preventDefault();
+    const recipient = document.getElementById('recipient').value;
+    const amount = parseInt(document.getElementById('amount').value);
+    const response = await fetch('http://localhost:3000/transact', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ recipient, amount })
+    });
+    const data = await response.text();
+    getTransactions(data);
+}
+
+async function createItem(event) {
+    event.preventDefault();
+    const emoji = document.getElementById('emoji').value;
+    const name = document.getElementById('name').value;
+    const price = parseInt(document.getElementById('price').value);
+    const seller = document.getElementById('seller').value;
+    const response = await fetch('http://localhost:3000/add-item', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ emoji, name, price, seller })
+    });
+    const data = await response.text();
+    document.getElementById('items').textContent = data;
+}
+
+
+async function getItems() {
     try {
-        const response = await fetch(`http://localhost:3000/mine`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ data: 'Sample Data' })
+        const response = await fetch('http://localhost:3000/items');
+        const data = await response.json();
+        displayItems(data);    
+    } catch(error) {
+        console.error('Error fetching items:', error);
+    }
+}
+
+// Function to create and insert HTML for each item
+function displayItems(items) {
+    const container = document.getElementById('items');
+    container.innerHTML = ''; // Clear previous items if any
+    items.forEach(item => {
+        const itemElement = document.createElement('div');
+        itemElement.classList.add('crypto-item');
+        itemElement.innerHTML = `
+
+            <div class="crypto-info">
+                <div class="crypto-name">Item: ${item.emoji}</div>
+                <div class="crypto-name">Id: ${item.id}</div>
+                <div class="crypto-amount">Name: ${item.name}</div>
+                <div class="crypto-value">Price: $${item.price}</div>
+                <div class="crypto-amount">Seller: ${item.seller}</div>
+                <div class="crypto-amount">Sold: ${item.sold}</div>
+            </div>
+        `;
+        container.appendChild(itemElement);
+    });
+}
+
+getItems();
+
+function displayBlocks(blocks) {
+    const container = document.getElementById('blocks');
+    container.innerHTML = '';
+    blocks.forEach(block => {
+        const blockElement = document.createElement('div');
+        blockElement.classList.add('block');
+        blockElement.innerHTML = `
+        
+            <div class="crypto-info">
+                <div class="crypto-name">Timestamp: ${block.timestamp}</div>
+                <div class="crypto-name">Last Hash: ${block.lastHash}</div>
+                <div class="crypto-name">Hash: ${block.hash}</div>
+                <div class="crypto-name">Data: ${block.data}</div>
+                <div class="transactions">
+                ${block.data.map(transaction => `
+                    <div class="transaction">
+                        <div class="crypto-name">
+                            <span><strong>Transaction ID:</strong> ${transaction.id}</span>
+                            <span><strong>Timestamp:</strong> ${transaction.input.timestamp}</span>
+                        </div>
+                        <div class="crypto-name">
+                            <span><strong>Amount:</strong> ${transaction.input.amount}</span>
+                            <span><strong>Address:</strong> ${transaction.input.address}</span>
+                        </div>
+                        <div class="crypto-value">
+                            ${transaction.outputs.map(output => `
+                                <div class="output-info">
+                                    <span><strong>Amount:</strong> ${output.amount}</span>
+                                    <span><strong>Address:</strong> ${output.address}</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `).join('')}
+                <div class="crypto-name">Nonce: ${block.nonce}</div>
+                <div class="crypto-name">Difficulty: ${block.difficulty}</div>
+                <div class="crypto-name">Process Time: ${block.processTime}</div>
+            </div>
+        `;
+        container.appendChild(blockElement);
+    });
+}
+
+async function filterBlocks() {
+    const address = document.getElementById('address-input').value;
+    const blocks = await getBlocks();
+    const filteredBlocks = blocks.filter(block => {
+        return block.data.some(transaction => {
+            return transaction.input.address === address || transaction.outputs.some(output => output.address === address);
         });
-        document.getElementById('mineStatus').innerText = 'New block mined successfully!';
-    } catch (error) {
-        console.error(error);
-        document.getElementById('mineStatus').innerText = 'Error mining block';
-    }
-});
+    });
+    displayBlocks(filteredBlocks);
+}
 
-document.getElementById('getBlocksButton').addEventListener('click', async () => {
-    try {
-        const response = await fetch('http://localhost:3000/blocks');
-        const blocks = await response.json();
-        document.getElementById('blocksDisplay').innerText = JSON.stringify(blocks, null, 2);
-    } catch (error) {
-        console.error(error);
-        document.getElementById('blocksDisplay').innerText = 'Error fetching blocks';
-    }
-});
+getBlocks().then(displayBlocks);
+getBlocks();
 
-document.getElementById('getTransactionsButton').addEventListener('click', async () => {
+async function buyItem(event) {
+    event.preventDefault();
+    const id = document.getElementById('id').value;
+    const response = await fetch('http://localhost:3000/buy-item', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ id })
+    });
+    const data = await response.text();
+    document.getElementById('buy').textContent = data;
+}
+
+async function startMining() {
+    const response = await fetch('http://localhost:3000/start-mining', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    });
+    const data = await response.text();
+    document.getElementById('start').textContent = data;
+}
+
+async function stopMining() {
+    const response = await fetch('http://localhost:3000/stop-mining', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    });
+    const data = await response.text();
+    document.getElementById('stop').textContent = data;
+}
+
+async function getTransactions() {
     try {
         const response = await fetch('http://localhost:3000/transactions');
-        const transactions = await response.json();
-        document.getElementById('transactionsDisplay').innerText = JSON.stringify(transactions, null, 2);
-    } catch (error) {
-        console.error(error);
-        document.getElementById('transactionsDisplay').innerText = 'Error fetching transactions';
+        const data = await response.json();
+        displayTransactions(data);    
+    } catch(error) {
+        console.error('Error fetching transactions:', error);
     }
+}
+
+getTransactions();
+
+function displayTransactions(transactions) {
+    const container = document.getElementById('transactions');
+    container.innerHTML = '';
+    transactions.forEach(transaction => {
+        const transactionElement = document.createElement('div');
+        transactionElement.classList.add('transaction');
+        transactionElement.innerHTML = `
+
+            <div class="crypto-info">
+                <div class="crypto-name">Id: ${transaction.id}</div>
+                <div class="crypto-name">Timestamp: ${transaction.input.timestamp}</div>
+                <div class="crypto-name">Amount: ${transaction.input.amount}</div>
+                <div class="crypto-name">Address: ${transaction.input.address}</div>
+                <div class="crypto-name">Signature r: ${transaction.input.signature.r}</div>
+                <div class="crypto-name">Signature s: ${transaction.input.signature.s}</div>
+                ${transaction.outputs.map(output => `
+                    <div class="crypto-value">Output Amount: ${output.amount}</div>
+                    <div class="crypto-name">Output Address: ${output.address}</div>
+                `).join('')}
+            </div>
+        `;
+        container.appendChild(transactionElement);
+    });
+}
+
+
+const API_URL = 'http://localhost:3000';
+
+// Fetch available items and populate the list
+function loadAvailableItems() {
+    fetch(`${API_URL}/items`)
+        .then(response => response.json())
+        .then(data => {
+            const itemsList = document.getElementById('available-items');
+            const itemSelect = document.getElementById('item-select');
+            itemsList.innerHTML = '';
+            itemSelect.innerHTML = '';
+
+            data.forEach(item => {
+                const listItem = document.createElement('li');
+                listItem.textContent = `Item: ${item.emoji}, ID: ${item.id}, Name: ${item.name}, Price: ${item.price}`;
+                itemsList.appendChild(listItem);
+
+                const option = document.createElement('option');
+                option.value = item.id;
+                option.textContent = `${item.emoji} ${item.name} (Price: ${item.price})`;
+                itemSelect.appendChild(option);
+            });
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+}
+
+// Event listener for loading wallet items
+document.getElementById('load-wallet-items').addEventListener('click', function() {
+    fetch(`${API_URL}/wallet-items`)
+        .then(response => response.json())
+        .then(data => {
+            const itemsList = document.getElementById('wallet-items');
+            itemsList.innerHTML = '';
+            
+            data.forEach(item => {
+                const listItem = document.createElement('li');
+                listItem.textContent = `ITEM: ${item.emoji}, ID: ${item.id}, Name: ${item.name}, Price: ${item.price}`;
+                itemsList.appendChild(listItem);
+            });
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
 });
 
-document.getElementById('transactButton').addEventListener('click', async () => {
-    const recipient = document.getElementById('recipient').value;
-    const amount = document.getElementById('amount').value;
-    try {
-        const response = await fetch('http://localhost:3000/transact', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ recipient, amount })
-        });
-        document.getElementById('transactionsDisplay').innerText = 'Transaction sent!';
-    } catch (error) {
-        console.error(error);
-        document.getElementById('transactionsDisplay').innerText = 'Error sending transaction';
-    }
-});
+// Load available items on page load
+window.onload = loadAvailableItems;
 
-document.getElementById('newWalletButton').addEventListener('click', async () => {
-    try {
-        const response = await fetch('http://localhost:3000/wallets', {
-            method: 'POST'
-        });
-        const newWallet = await response.json();
-        document.getElementById('walletsDisplay').innerText = `New wallet created: ${JSON.stringify(newWallet, null, 2)}`;
-    } catch (error) {
-        console.error(error);
-        document.getElementById('walletsDisplay').innerText = 'Error creating new wallet';
-    }
-});

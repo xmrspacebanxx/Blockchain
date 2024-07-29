@@ -1,10 +1,9 @@
 
-const fs = require('fs');
 const Block = require('./Block');
 
 class Blockchain{
     constructor(){
-        this.chain = this.loadBlockchain() || [Block.genesis()];
+        this.chain = [Block.genesis()];
     }
 
     getLastBlock(){
@@ -14,7 +13,6 @@ class Blockchain{
     addBlock(data){
         const block = Block.mineBlock(this.getLastBlock(), data);
         this.chain.push(block);
-        this.saveChain();
         return block;
     }
 
@@ -36,27 +34,12 @@ class Blockchain{
         if(newChain.length <= this.chain.length){
             console.log('Received chain is not longer than the current chain');
             return;
-        } else if(this.isValidChain(newChain)){
+        } else if(!this.isValidChain(newChain)){
             console.log('the received chain is not valid');
             return;
         }
         console.log('Replacing the received chain...');
         this.chain = newChain;
-    }
-
-    saveChain(){
-        // Convertir objeto JavaScript a JSON y escribirlo en un archivo
-            fs.writeFile('bc.json', JSON.stringify(this.chain, null, 2), (err) => {
-                console.log('Blockchain guardada en bc.json');
-            });
-    }
-
-    loadBlockchain() {
-        if (fs.existsSync('bc.json')) {
-            const data = fs.readFileSync('bc.json');
-            return JSON.parse(data);
-        }
-        return null;
     }
     
 }

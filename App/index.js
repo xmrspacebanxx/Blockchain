@@ -15,6 +15,7 @@ const bc = new BlockchainClass();
 const Wallet = require('../Wallet/index');
 const WalletManager = require('../Wallet/walletManager');
 const TransactionPool = require('../Wallet/transactions-pool');
+const StorePool = require('../Marketplace/index');
 
 const walletManager = new WalletManager();
 let wallet;
@@ -39,8 +40,9 @@ function saveWallet(wallet) {
 // Initialize wallet
 loadWallet();
 
-const tp = new TransactionPool();
-const p2pServer = new P2pServer(bc, tp);
+const tp = new TransactionPool(bc);
+const st = new StorePool();
+const p2pServer = new P2pServer(bc, tp, st);
 const miner = new Miner(bc, tp, wallet, p2pServer);
 
 app.use(bodyParser.json());
@@ -55,6 +57,23 @@ app.use((req, res, next) => {
 app.get('/blocks', (req, res)=>{
     res.json(bc.chain);
 });
+
+// Function to load blockchain from file
+function loadBlockchain() {
+    if (fs.existsSync('blockchain.json')) {
+        const data = fs.readFileSync('blockchain.json');
+        const chainData = JSON.parse(data);
+        bc.replaceChain(chainData);
+    }
+}
+
+// Function to save blockchain to file
+function saveBlockchain() {
+    fs.writeFileSync('blockchain.json', JSON.stringify(bc.chain, null, 2));
+}
+
+// Load blockchain initially
+loadBlockchain();
 
 app.post('/mine', (req, res) => {
     const block = bc.addBlock(req.body.data);
@@ -74,29 +93,22 @@ app.post('/transact', (req, res) => {
     res.redirect('/transactions');
 });
 
-app.post('/miner-transactions', async (req, res) => {
-    try {
-        const { count } = req.body;
-        const numBlocks = parseInt(count, 10) || 1; // Valor por defecto es 1 si no se especifica
-        let minedCount = 0;
+app.post('/miner-transactions', (req, res) => {
+    const block = miner.mine();
+    console.log(`Addeed new block ${block}`);
+    saveBlockchain();
+    res.redirect('/blocks');
+});
 
-        res.setHeader('Content-Type', 'application/json');
-        res.setHeader('Transfer-Encoding', 'chunked');
+// Routes for mining control
+app.post('/start-mining', (req, res) => {
+    miner.startMining();
+    res.json({ status: 'Mining started' });
+});
 
-        for (let i = 0; i < numBlocks; i++) {
-            const block = await miner.mine(); // Asume que miner.mine() es una función asincrónica
-            minedCount++;
-            console.log(`Added new block: ${block}`);
-
-            // Enviar una actualización al cliente
-            res.write(JSON.stringify({ minedCount, block }) + '\n');
-        }
-
-        res.end();
-    } catch (error) {
-        console.error('Error mining blocks:', error);
-        res.status(500).json({ error: 'Failed to mine blocks' });
-    }
+app.post('/stop-mining', (req, res) => {
+    miner.stopMining();
+    res.json({ status: 'Mining stopped' });
 });
 
 app.get('/public-key', (req, res) => {
@@ -119,6 +131,36 @@ app.post('/wallets', (req, res) => {
 app.get('/wallets', (req, res) => {
     const wallets = walletManager.listWallets();
     res.status(200).json(wallets);
+});
+
+// Route to add an item to the pool
+app.post('/add-item', (req, res) => {
+    const { emoji, name, price, seller } = req.body;
+    const item = st.addItem(emoji, name, price, seller);
+    p2pServer.syncStore();
+    res.json({ status: 'Item added', item });
+});
+
+// Route to get all items
+app.get('/items', (req, res) => {
+    res.json(st.items); // Usa la instancia de StorePool
+});
+
+// Route to buy an item
+app.post('/buy-item', (req, res) => {
+    const { id, amount } = req.body;
+    try {
+        const result = st.buyItem(id, amount, wallet, bc, tp, p2pServer); // Usa la instancia de StorePool
+        res.json(result);
+    } catch (error) {
+        res.status(400).json({ status: error.message });
+    }
+});
+
+// Route to get items in wallet
+app.get('/wallet-items', (req, res) => {
+    // Return items in the wallet (implement this logic)
+    res.json([]);
 });
 
 app.listen(HTTP_PORT, ()=>{

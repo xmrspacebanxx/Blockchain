@@ -6,14 +6,16 @@
   "scripts": {
     "dev-test": "nodemon dev-test",
     "test": "jest --watchAll",
-    "dev": "nodemon ./App/index.js"
+    "dev": "nodemon ./App/index.js & xdg-open ./App/public/index.html",
+    "start": "open ./App/public/index.html"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
     "jest": "^29.7.0",
-    "nodemon": "^3.1.0"
+    "nodemon": "^3.1.0",
+    "open": "^10.1.0"
   },
   "dependencies": {
     "body-parser": "^1.20.2",

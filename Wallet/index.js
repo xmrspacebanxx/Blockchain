@@ -24,21 +24,21 @@ class Wallet{
         return this.keyPair.getPrivate();
     }
 
-    createTransaction(recipient, amount, blockchain, transactionPool){
+    createTransaction(recipient, amount, blockchain, transactionPool) {
         this.balance = this.calculateBalance(blockchain, this.publicKey);
-        if(amount > this.balance){
+        if (amount > this.balance) {
             console.log(`Amount ${amount} exceeds balance ${this.balance}`);
             return;
         }
         let transaction = transactionPool.existingTransaction(this.publicKey);
-        if(transaction){
+        if (transaction) {
             transaction.update(this, recipient, amount);
         } else {
             transaction = Transaction.newTransaction(this, recipient, amount);
             transactionPool.updateAddTransaction(transaction);
         }
         return transaction;
-    }
+    }    
 
     static blockchainWallet(){
         const blockchainWallet = new this();
@@ -47,67 +47,68 @@ class Wallet{
     }
 
     calculateBalance(blockchain, address) {
-        let balance = this.balance;
+        let balance = 0; // Empezamos con balance en 0 en vez de this.balance
         let transactions = [];
-    
-        if (blockchain.chain.length <= 1) {
-            return balance;
-        } else {
-            const bcCopy = blockchain.chain.slice(1, blockchain.chain.length); // Eliminar el bloque génesis
-            bcCopy.forEach((block) => {
-                block.data.forEach(transaction => {
-                    transactions.push(transaction);
-                });
+        
+        // Revisar todas las transacciones en la blockchain
+        blockchain.chain.forEach(block => {
+            block.data.forEach(transaction => {
+                transactions.push(transaction);
             });
-        }
+        });
     
+        // Filtrar las transacciones donde la dirección de input es la de la wallet
         const walletInputs = transactions.filter(transaction => transaction.input.address === address);
         let startTime = 0;
-    
+        
         if (walletInputs.length > 0) {
-            const recentInputs = walletInputs.reduce((prev, current) => prev.input.timestamp > current.input.timestamp ? prev : current);
-            // const recentOutput = recentInput.outputs.find(output => output.address === address);
-            // if (recentOutput) {
-            //     balance = recentOutput.amount;
-            //     startTime = recentInput.input.timestamp;
-            // }
-            balance = recentInputs.outputs.find(output => output.address === address).amount;
-            startTime = recentInputs.input.timestamp;
+            // Encontrar la transacción de input más reciente
+            const recentInput = walletInputs.reduce((prev, current) => prev.input.timestamp > current.input.timestamp ? prev : current);
+            const recentOutput = recentInput.outputs.find(output => output.address === address);
+            if (recentOutput) {
+                balance = recentOutput.amount;
+                startTime = recentInput.input.timestamp;
+            }
         }
     
+        // Añadir las salidas desde la transacción más reciente en adelante
         transactions.forEach(transaction => {
             if (transaction.input.timestamp > startTime) {
                 transaction.outputs.forEach(output => {
                     if (output.address === address) {
-                        balance += output.amount;
+                        balance += output.amount; // Añadir el monto recibido
+                    }
+                    if (transaction.input.address === address) {
+                        balance -= output.amount; // Restar el monto enviado
                     }
                 });
             }
         });
-    
+        
         return balance;
     }
-
-        // Method to serialize wallet to JSON
-        toJSON() {
-            return {
-                balance: this.balance,
-                keyPair: {
-                    public: this.keyPair.getPublic().encode('hex'),
-                    private: this.keyPair.getPrivate().toString(16)
-                },
-                publicKey: this.publicKey
-            };
-        }
     
-        // Method to deserialize wallet from JSON
-        static fromJSON(data) {
-            const wallet = new Wallet();
-            wallet.balance = data.balance;
-            wallet.keyPair = ChainUtil.restoreKeyPair(data.keyPair.private);
-            wallet.publicKey = data.keyPair.public;
-            return wallet;
-        }
+
+    // Method to serialize wallet to JSON
+    toJSON() {
+        return {
+            balance: this.balance,
+            keyPair: {
+                public: this.keyPair.getPublic().encode('hex'),
+                private: this.keyPair.getPrivate().toString(16)
+            },
+            publicKey: this.publicKey
+        };
+    }
+    
+    // Method to deserialize wallet from JSON
+    static fromJSON(data) {
+        const wallet = new Wallet();
+        wallet.balance = data.balance;
+        wallet.keyPair = ChainUtil.restoreKeyPair(data.keyPair.private);
+        wallet.publicKey = data.keyPair.public;
+        return wallet;
+    }
     
 }
 
