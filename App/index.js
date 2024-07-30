@@ -1,23 +1,21 @@
 
 const express = require('express');
 const fs = require('fs');
+const QRCode = require('qrcode');
 
 const BlockchainClass = require('../Blockchain/index');
 
 const P2pServer = require('./p2pServer');
-const HTTP_PORT = process.env.HTTP_PORT || 3000;
+const HTTP_PORT = process.env.HTTP_PORT || 3001;
 const bodyParser = require('body-parser');
-const Miner = require('../App/miner');
 
 const app = express();
 const bc = new BlockchainClass();
 
 const Wallet = require('../Wallet/index');
-const WalletManager = require('../Wallet/walletManager');
 const TransactionPool = require('../Wallet/transactions-pool');
 const StorePool = require('../Marketplace/index');
 
-const walletManager = new WalletManager();
 let wallet;
 
 // Function to load wallet from file
@@ -39,6 +37,27 @@ function saveWallet(wallet) {
 
 // Initialize wallet
 loadWallet();
+
+/**
+ * Función para generar un código QR y guardarlo como archivo de imagen.
+ * @param {string} text - El texto para codificar en el código QR.
+ * @param {string} outputFilePath - La ruta del archivo de salida.
+ */
+function generateQRCode(text, outputFilePath) {
+    QRCode.toFile(outputFilePath, text, function (err) {
+        if (err) {
+            console.error('Error generando el código QR:', err);
+            return;
+        }
+        console.log('Código QR guardado en', outputFilePath);
+    });
+}
+
+// Generar el código QR con texto único y guardarlo como archivo PNG
+const uniqueText = wallet.publicKey;
+const outputFilePath = './App/public/images/qrcode.png';
+generateQRCode(uniqueText, outputFilePath);
+
 
 const tp = new TransactionPool(bc);
 const st = new StorePool();
@@ -112,11 +131,12 @@ app.post('/stop-mining', (req, res) => {
 });
 
 app.get('/public-key', (req, res) => {
-    res.json({publicKey: wallet.publicKey});
+    res.json(wallet.publicKey);
 });
 
 app.get('/balance', (req, res) => {
-    res.json(wallet.calculateBalance(bc, wallet.publicKey));
+    const balance = wallet.calculateBalance(bc, wallet.publicKey);
+    res.json(balance);
 });
 
 app.post('/address-balance', (req, res) => {
@@ -168,6 +188,7 @@ app.listen(HTTP_PORT, ()=>{
 });
 
 p2pServer.listen();
+
 
 
 /*  Agregar nodo (escribir en consola)

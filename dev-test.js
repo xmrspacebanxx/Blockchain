@@ -3,12 +3,12 @@
 const BlockchainClass = require('./Blockchain/index');
 const BlockClass = require('./Blockchain/Block');
 
-const bc = new BlockchainClass();
+// const bc = new BlockchainClass();
 
-for(let i = 1; i<= 1000; i++){
-    // block = new BlockClass(Date.now(), "0".repeat(64), "0".repeat(64), `Data${i}`);
-    console.log(bc.addBlock(`Block ${i}`).toString());
-}
+// for(let i = 1; i<= 1000; i++){
+//     // block = new BlockClass(Date.now(), "0".repeat(64), "0".repeat(64), `Data${i}`);
+//     console.log(bc.addBlock(`Block ${i}`).toString());
+// }
 
 // const fooBlock = BlockClass.mineBlock(BlockClass.genesis(), 'foorbar');
 
@@ -31,6 +31,14 @@ for(let i = 1; i<= 1000; i++){
 
 
 const Wallet = require('./Wallet');
-const wallet = new Wallet;
+const Coin = require('./coins/coins');
 
-console.log(wallet.toString());
+// Crear una wallet
+const myWallet = new Wallet(); // 1 MyCoin = 0.1 USD
+
+// Definir mi coin
+const myCoin = new Coin(); // 1000 MyCoin
+
+// Mostrar el saldo de la billetera y su valor aproximado en USD
+console.log(myWallet.toString());
+console.log(myCoin.toString());

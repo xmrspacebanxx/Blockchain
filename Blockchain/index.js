@@ -4,16 +4,11 @@ const Block = require('./Block');
 class Blockchain{
     constructor(){
         this.chain = [Block.genesis()];
+        this.chain = [Block.genesis()];
     }
 
     getLastBlock(){
         return this.chain[this.chain.length -1];
-    }
-
-    addBlock(data){
-        const block = Block.mineBlock(this.getLastBlock(), data);
-        this.chain.push(block);
-        return block;
     }
 
     isValidChain(chain){
@@ -33,9 +28,6 @@ class Blockchain{
     replaceChain(newChain){
         if(newChain.length <= this.chain.length){
             console.log('Received chain is not longer than the current chain');
-            return;
-        } else if(!this.isValidChain(newChain)){
-            console.log('the received chain is not valid');
             return;
         }
         console.log('Replacing the received chain...');

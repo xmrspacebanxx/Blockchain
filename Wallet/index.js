@@ -1,5 +1,5 @@
 
-const { INITIAL_BALANCE }  = require('../config');
+const { INITIAL_BALANCE, VALUE_IN_USD }  = require('../config');
 const ChainUtil = require('../chain-utils');
 const Transaction = require('./transactions');
 
@@ -10,10 +10,8 @@ class Wallet{
         this.publicKey = this.keyPair.getPublic().encode('hex');
     }
 
-    toString(){
-        return `wallet
-        publicKey: ${this.publicKey}
-        balance: ${this.balance}`
+    getBalance(){
+        return this.balance;
     }
 
     sign(datahash){

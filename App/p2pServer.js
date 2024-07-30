@@ -1,7 +1,8 @@
-
 const webSocket = require('ws');
+require('dotenv').config();
 
 const peers = process.env.PEERS ? process.env.PEERS.split(',') : [];
+
 const P2P_PORT = process.env.P2P_PORT || 5001;
 
 const MESSAGE_TYPES = {
@@ -20,8 +21,8 @@ class p2pServer{
         this.retryInterval = 60000; // Intervalo de reintento de reconexi�n (5 segundos)
     }
 
-    listen(){
-        const server = new webSocket.Server({port : P2P_PORT});
+    listen() {
+        const server = new webSocket.Server({ port: P2P_PORT });
         server.on('connection', socket => this.connectSocket(socket));
         this.connectToPeers();
         console.log('Listening for peer to peer connections on port ' + P2P_PORT);
@@ -45,9 +46,9 @@ class p2pServer{
         setTimeout(() => this.connectToPeer(peer), this.retryInterval);
     }
 
-    connectSocket(socket){
+    connectSocket(socket) {
         this.sockets.push(socket);
-        console.log('[+]Socket connected');
+        console.log('[+] Socket connected');
         this.messageHandler(socket);
         this.sendChain(socket);
         this.sendItems(socket);
@@ -65,12 +66,12 @@ class p2pServer{
         }
     }
 
-    messageHandler(socket){
-        socket.on('message', message =>{
+    messageHandler(socket) {
+        socket.on('message', message => {
             const data = JSON.parse(message);
-            switch(data.type){
+            switch (data.type) {
                 case MESSAGE_TYPES.chain:
-                    this.blockchain.replaceChain(data.chain)
+                    this.blockchain.replaceChain(data.chain);
                     break;
                 case MESSAGE_TYPES.transaction:
                     this.transactionPool.updateAddTransaction(data.transaction);
@@ -82,17 +83,17 @@ class p2pServer{
                     this.storePool.replaceItems(data.items);
                     break;
             }
-        })
+        });
     }
 
-    sendChain(socket){
+    sendChain(socket) {
         socket.send(JSON.stringify({
             type: MESSAGE_TYPES.chain,
             chain: this.blockchain.chain
         }));
     }
 
-    sendTransaction(socket, transaction){
+    sendTransaction(socket, transaction) {
         socket.send(JSON.stringify({
             type: MESSAGE_TYPES.transaction,
             transaction
@@ -118,11 +119,11 @@ class p2pServer{
         });
     }
 
-    broadcastTransaction(transaction){
-        this.sockets.forEach(socket => this.sendTransaction(socket, transaction))
+    broadcastTransaction(transaction) {
+        this.sockets.forEach(socket => this.sendTransaction(socket, transaction));
     }
 
-    broadcastClearTransactions(){
+    broadcastClearTransactions() {
         this.sockets.forEach(socket => socket.send(JSON.stringify({
             type: MESSAGE_TYPES.clear_transactions
         })));
