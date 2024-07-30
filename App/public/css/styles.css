@@ -9,7 +9,7 @@ body {
 }
 
 .container {
-    width: 350px;
+    width: 600px;
     background-color: #fff;
     border-radius: 10px;
     box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
@@ -141,13 +141,11 @@ main {
 
 .crypto-info .crypto-name {
     font-weight: bold;
+    text-align: left;
 }
 
 .crypto-info .crypto-value {
-    color: green;
-}
-
-.crypto-value{
+    color: rgb(51, 4, 73);
     text-align: left;
 }
 
@@ -163,13 +161,11 @@ main {
     text-align: left;
 }
 
-.data {
-    flex: 1;
-    font-weight: bold;
-    text-align: center;
-    max-height: 400px; /* Ajusta el tamaño máximo del contenido dinámico */
-    overflow-y: auto
+.block {
+    padding: 5px;
 }
+
+
 
 footer {
     display: flex;
@@ -300,6 +296,24 @@ h2 {
     background-color: #f5f5f5; /* Color de fondo para distinguirlo */
     color: #333; /* Color del texto */
     line-height: 1.5; /* Mejora la legibilidad del texto */
+}
+
+#progress-container {
+    width: 100%;
+    background-color: #222; /* Fondo oscuro */
+    border: 1px solid #444; /* Borde gris oscuro */
+    border-radius: 5px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
+    position: relative;
+    height: 5px; /* Altura de la barra de progreso */
+}
+
+#progress-bar {
+    width: 0%; /* Ancho inicial */
+    height: 100%; /* Altura completa */
+    background: linear-gradient(90deg, rgba(38,198,218,1) 0%, rgba(3,218,198,1) 100%); /* Gradiente azul/verde */
+    transition: width 0.4s ease; /* Transición más suave */
 }
 
 

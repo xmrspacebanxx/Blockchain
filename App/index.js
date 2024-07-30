@@ -62,7 +62,6 @@ generateQRCode(uniqueText, outputFilePath);
 const tp = new TransactionPool(bc);
 const st = new StorePool();
 const p2pServer = new P2pServer(bc, tp, st);
-const miner = new Miner(bc, tp, wallet, p2pServer);
 
 app.use(bodyParser.json());
 

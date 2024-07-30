@@ -44,7 +44,7 @@ function addSC(){
 
 async function getBlocks() {
     try {
-        const response = await fetch('http://localhost:3000/blocks'); // Ajusta la URL según sea necesario
+        const response = await fetch('http://localhost:3001/blocks'); // Ajusta la URL según sea necesario
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -57,7 +57,7 @@ async function getBlocks() {
 }
 
 async function getBalance() {
-    const response = await fetch('http://localhost:3000/balance');
+    const response = await fetch('http://localhost:3001/balance');
     const data = await response.json();
     document.getElementById('balance').textContent = JSON.stringify(data, null, 2);
 }
@@ -66,7 +66,7 @@ async function createTransaction(event) {
     event.preventDefault();
     const recipient = document.getElementById('recipient').value;
     const amount = parseInt(document.getElementById('amount').value);
-    const response = await fetch('http://localhost:3000/transact', {
+    const response = await fetch('http://localhost:3001/transact', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -83,7 +83,7 @@ async function createItem(event) {
     const name = document.getElementById('name').value;
     const price = parseInt(document.getElementById('price').value);
     const seller = document.getElementById('seller').value;
-    const response = await fetch('http://localhost:3000/add-item', {
+    const response = await fetch('http://localhost:3001/add-item', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -97,7 +97,7 @@ async function createItem(event) {
 
 async function getItems() {
     try {
-        const response = await fetch('http://localhost:3000/items');
+        const response = await fetch('http://localhost:3001/items');
         const data = await response.json();
         displayItems(data);    
     } catch(error) {
@@ -189,7 +189,7 @@ getBlocks();
 async function buyItem(event) {
     event.preventDefault();
     const id = document.getElementById('id').value;
-    const response = await fetch('http://localhost:3000/buy-item', {
+    const response = await fetch('http://localhost:3001/buy-item', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -201,7 +201,7 @@ async function buyItem(event) {
 }
 
 async function startMining() {
-    const response = await fetch('http://localhost:3000/start-mining', {
+    const response = await fetch('http://localhost:3001/start-mining', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -212,7 +212,7 @@ async function startMining() {
 }
 
 async function stopMining() {
-    const response = await fetch('http://localhost:3000/stop-mining', {
+    const response = await fetch('http://localhost:3001/stop-mining', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -224,7 +224,7 @@ async function stopMining() {
 
 async function getTransactions() {
     try {
-        const response = await fetch('http://localhost:3000/transactions');
+        const response = await fetch('http://localhost:3001/transactions');
         const data = await response.json();
         displayTransactions(data);    
     } catch(error) {
