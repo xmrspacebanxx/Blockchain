@@ -1,5 +1,6 @@
 
 const Item = require('./item');
+const Wallet = require('../Wallet/index');
 
 class StorePool {
 
@@ -40,8 +41,13 @@ class StorePool {
             return false;
         }
         for(let i=1; i < items.length; i++){
-            
+            const item = items[i];
+            const wallet = new Wallet();
+            if(item.seller !== wallet.publicKey){
+                return false;
+            }
         }
+        return true;
     }
 
     replaceItems(newItems){
