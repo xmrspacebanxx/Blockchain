@@ -1,11 +1,10 @@
 
 const Item = require('./item');
-const Wallet = require('../Wallet/index');
 
 class StorePool {
 
     constructor(){
-        this.items = [];
+        this.items = [Item.genesis()];
     }
 
     addItem( emoji, name, price, seller){
@@ -49,7 +48,7 @@ class StorePool {
         if(newItems.length <= this.items.length){
             console.log('Received store is not longer than current store');
             return;
-        } else if(!this.isValidItems(newItems)){
+        } else if(this.isValidItems(newItems)){
             console.log('the received store is not valid');
         }
         console.log('Replacing the received store...');

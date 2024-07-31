@@ -20,7 +20,7 @@ class Item {
     }
 
     static genesis(){
-        return new this('b30f4d00-4df7-11ef-a72f-c9828cb4724b', '🔥', 'Fire', 100, 'xmrspacebanxx', true);
+        return new this('🪨', 'Rock', 161000000, 'xmrspacebanxx', false);
     }
     
 

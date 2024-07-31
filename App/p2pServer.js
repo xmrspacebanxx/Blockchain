@@ -18,7 +18,7 @@ class p2pServer{
         this.transactionPool = transactionPool;
         this.storePool = storePool;
         this.sockets = [];
-        this.retryInterval = 60000; // Intervalo de reintento de reconexi�n (5 segundos)
+        this.retryInterval = 600000; // Intervalo de reintento de reconexi�n (5 segundos)
     }
 
     listen() {

@@ -8,6 +8,7 @@ const BlockchainClass = require('../Blockchain/index');
 const P2pServer = require('./p2pServer');
 const HTTP_PORT = process.env.HTTP_PORT || 3001;
 const bodyParser = require('body-parser');
+const Miner = require('../App/miner');
 
 const app = express();
 const bc = new BlockchainClass();
@@ -62,6 +63,8 @@ generateQRCode(uniqueText, outputFilePath);
 const tp = new TransactionPool(bc);
 const st = new StorePool();
 const p2pServer = new P2pServer(bc, tp, st);
+const miner = new Miner(bc, tp, wallet, p2pServer);
+
 
 app.use(bodyParser.json());
 
