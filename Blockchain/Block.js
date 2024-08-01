@@ -40,7 +40,7 @@ class Block {
             nonce++;
             timestamp = Date.now();
             difficulty = Block.adjustDifficulty(lastBlock, timestamp);
-            hash = this.hash(timestamp, lastHash, data, nonce);
+            hash = this.hash(timestamp, lastHash, data, nonce, difficulty);
             // console.log(hash);
         } while (hash.substring(0, difficulty) != '0'.repeat(difficulty));
         let t2 = Date.now();
