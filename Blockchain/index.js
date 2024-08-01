@@ -18,16 +18,23 @@ class Blockchain{
 
     isValidChain(chain) {
         if (JSON.stringify(chain[0]) !== JSON.stringify(Block.genesis())) {
+            console.log('Genesis block does not match');
             return false;
         }
+
         for (let i = 1; i < chain.length; i++) {
             const block = chain[i];
             const lastBlock = chain[i - 1];
 
-            if (
-                block.lastHash !== lastBlock.hash ||
-                block.hash !== Block.blockHash(block)
-            ) {
+            // Verificar que lastHash coincide
+            if (block.lastHash !== lastBlock.hash) {
+                console.log(`Invalid lastHash at block ${i}`);
+                return false;
+            }
+
+            // Verificar que el hash del bloque es correcto
+            if (block.hash !== Block.blockHash(block)) {
+                console.log(`Invalid hash at block ${i}`);
                 return false;
             }
         }
