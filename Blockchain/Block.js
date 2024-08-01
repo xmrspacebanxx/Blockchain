@@ -52,9 +52,9 @@ class Block {
         return ChainUtil.hash(`${timestamp}${lastHash}${JSON.stringify(data)}${nonce}${difficulty}`).toString();
     }
 
-    static blockHash(block){
-        const {timestamp, lastHash, data, nonce, difficulty} = Block;
-        return Block.hash(timestamp, lastHash, data, nonce, difficulty);
+    static blockHash(block) {
+        const { timestamp, lastHash, data, nonce, difficulty } = block;
+        return this.hash(timestamp, lastHash, data, nonce, difficulty);
     }
 
     static adjustDifficulty(lastBlock, currentTime){
