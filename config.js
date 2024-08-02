@@ -1,6 +1,6 @@
 
-const DIFFICULTY = 3;
-const MINE_RATE = 300000; // Wait time in milliseconds
+const DIFFICULTY = 9;
+const MINE_RATE = 1000; // Wait time in milliseconds
 const INITIAL_BALANCE = 0;
 const MINING_REWARD = 9000;
 let isMining = false;

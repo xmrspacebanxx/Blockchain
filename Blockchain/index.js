@@ -52,15 +52,6 @@ class Blockchain{
         console.log('Replacing the received chain...');
         this.chain = newChain;
     }
-
-
-    getChain() {
-        return this.chain;
-    }
-
-    receiveChain(newChain) {
-        this.replaceChain(newChain);
-    }
     
 }
 

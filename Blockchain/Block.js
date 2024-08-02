@@ -27,7 +27,13 @@ class Block {
     }
 
     static genesis(){
-        return new this('Space Exploration Genesis Time', '0'.repeat(64), '0'.repeat(64), [], 0, DIFFICULTY, 0);
+        const timestamp = 'Space Exploration Genesis Time';
+        const lastHash = '0'.repeat(64);
+        const nonce = 0;
+        const difficulty = DIFFICULTY;
+        const data = [];
+        const hash = Block.hash(timestamp, lastHash, data, nonce, difficulty);
+        return new this(timestamp, lastHash, hash, data, nonce, difficulty, 0);
     }
 
     static mineBlock(lastBlock, data){
@@ -60,7 +66,7 @@ class Block {
     static adjustDifficulty(lastBlock, currentTime){
         let { difficulty } = lastBlock;
         difficulty = lastBlock.timestamp + MINE_RATE > currentTime ? difficulty + 1: difficulty - 1;
-        return difficulty;
+        return Math.max(difficulty, 8);
     }
 
 }
