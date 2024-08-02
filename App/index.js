@@ -146,6 +146,11 @@ app.post('/network', (req, res) => {
     p2pServer.network = true;
     p2pServer.connectToPeers();
     res.json({ success: true });
+});
+
+app.get('/status', (req, res) => {
+    const connected = p2pServer.length > 0;
+    res.json({ connected });
 })
 
 // Route to get items in wallet
