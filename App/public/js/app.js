@@ -42,6 +42,45 @@ function addSC(){
     }
 }
 
+async function network(event){
+    event.preventDefault();
+    try {
+        const response = document.getElementById('network').addEventListener('click', () => {
+            fetch('http://localhost:3001/network', {
+                method: 'POST'
+            })
+        });
+        const data = await response.json();
+        return data;
+    } catch (error){
+        console.log('Error when trying to reconnect', error);
+    }
+}
+
+function updateButtonNetwork(connected){
+    const button = document.getElementById('network');
+    if(connected) {
+        button.classList.remove('disconnected');
+        button.classList.add('connected');
+    } else {
+        button.classList.remove('connected');
+        button.classList.add('disconnected');
+    }
+}
+
+async function checkNetworkStatus() {
+    try {
+        const response = await fetch('http://localhost:3001/status');
+        const data = await response.json();
+        updateButtonNetwork(data.connected);
+    }
+    catch (error) {
+        console.error('Network check error', error);
+    }
+}
+
+setInterval(checkNetworkStatus, 5000);
+
 async function getBlocks() {
     try {
         const response = await fetch('http://localhost:3001/blocks'); // Ajusta la URL según sea necesario

@@ -18,7 +18,7 @@ class p2pServer{
         this.transactionPool = transactionPool;
         this.storePool = storePool;
         this.sockets = [];
-        this.retryInterval = 360000; // Intervalo de reintento de reconexi�n (5 segundos)
+        this.network = false;
     }
 
     listen() {
@@ -42,8 +42,7 @@ class p2pServer{
     }
 
     handleDisconnect(peer) {
-        console.log(`[-]Connection to peer ${peer} lost. Attempting to reconnect...`);
-        setTimeout(() => this.connectToPeer(peer), this.retryInterval);
+        console.log(`[-]Connection to peer ${peer} lost...`);
     }
 
     connectSocket(socket) {

@@ -1,9 +1,8 @@
 
 const express = require('express');
 const fs = require('fs');
-const QRCode = require('qrcode');
 
-const BlockchainClass = require('../Blockchain/index');
+const Blockchain = require('../Blockchain/index');
 
 const P2pServer = require('./p2pServer');
 const HTTP_PORT = process.env.HTTP_PORT || 3001;
@@ -11,59 +10,22 @@ const bodyParser = require('body-parser');
 const Miner = require('../App/miner');
 
 const app = express();
-const bc = new BlockchainClass();
+const bc = new Blockchain();
 
 const Wallet = require('../Wallet/index');
 const TransactionPool = require('../Wallet/transactions-pool');
 const StorePool = require('../Marketplace/index');
+const qrCode = require('../Wallet/qr-code');
 
-let wallet;
-
-// Function to load wallet from file
-function loadWallet() {
-    if (fs.existsSync('wallet.json')) {
-        const data = fs.readFileSync('wallet.json');
-        const walletData = JSON.parse(data);
-        wallet = Wallet.fromJSON(walletData);
-    } else {
-        wallet = new Wallet();
-        saveWallet(wallet);
-    }
-}
-
-// Function to save wallet to file
-function saveWallet(wallet) {
-    fs.writeFileSync('wallet.json', JSON.stringify(wallet.toJSON(), null, 2));
-}
-
-// Initialize wallet
-loadWallet();
-
-/**
- * Función para generar un código QR y guardarlo como archivo de imagen.
- * @param {string} text - El texto para codificar en el código QR.
- * @param {string} outputFilePath - La ruta del archivo de salida.
- */
-function generateQRCode(text, outputFilePath) {
-    QRCode.toFile(outputFilePath, text, function (err) {
-        if (err) {
-            console.error('Error generando el código QR:', err);
-            return;
-        }
-        console.log('Código QR guardado en', outputFilePath);
-    });
-}
-
-// Generar el código QR con texto único y guardarlo como archivo PNG
-const uniqueText = wallet.publicKey;
-const outputFilePath = './App/public/images/qrcode.png';
-generateQRCode(uniqueText, outputFilePath);
-
-
+const wallet = new Wallet();
 const tp = new TransactionPool(bc);
 const st = new StorePool();
 const p2pServer = new P2pServer(bc, tp, st);
 const miner = new Miner(bc, tp, wallet, p2pServer);
+
+const tx = wallet.publicKey;
+const fp = './App/public/images/pk.png';
+const QR = new qrCode(tx, fp);
 
 
 app.use(bodyParser.json());
@@ -178,6 +140,13 @@ app.post('/buy-item', (req, res) => {
         res.status(400).json({ status: error.message });
     }
 });
+
+// Network
+app.post('/network', (req, res) => {
+    p2pServer.network = true;
+    p2pServer.connectToPeers();
+    res.json({ success: true });
+})
 
 // Route to get items in wallet
 app.get('/wallet-items', (req, res) => {
