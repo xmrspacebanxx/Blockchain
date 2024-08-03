@@ -32,7 +32,7 @@ class Block {
         const nonce = 0;
         const difficulty = DIFFICULTY;
         const data = [];
-        const hash = Block.hash(timestamp, lastHash, data, nonce, difficulty);
+        const hash = '0000000a513008892fba17d92ff34f0a2ebc27fc9d2f0c79176795a41c1eb67afe70e10';
         return new this(timestamp, lastHash, hash, data, nonce, difficulty, 0);
     }
 
@@ -66,7 +66,7 @@ class Block {
     static adjustDifficulty(lastBlock, currentTime){
         let { difficulty } = lastBlock;
         difficulty = lastBlock.timestamp + MINE_RATE > currentTime ? difficulty + 1: difficulty - 1;
-        return Math.max(difficulty, 8);
+        return Math.max(difficulty, 6);
     }
 
 }

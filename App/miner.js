@@ -15,6 +15,7 @@ class Miner{
 
     mine(){
         if(isMining) {
+            console.log('Mining block...');
             const validTransactions = this.transactionPool.validTransactions();
             //include a reward for the miner
             validTransactions.push(Transaction.rewardTransaction(this.wallet, Wallet.blockchainWallet()));
