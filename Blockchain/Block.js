@@ -74,9 +74,9 @@ class Block {
 
     static blockHash(block) {
         const { timestamp, lastHash, data, nonce, difficulty } = block;
-        const hash = this.hash(timestamp, lastHash, data, nonce, difficulty);
-        return '0'.repeat(difficulty) + hash.substring(difficulty);
+        return this.hash(timestamp, lastHash, data, nonce, difficulty);
     }
+    
     
 
     static adjustDifficulty(lastBlock, currentTime){
