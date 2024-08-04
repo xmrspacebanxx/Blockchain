@@ -99,8 +99,7 @@ app.get('/public-key', (req, res) => {
 });
 
 app.get('/balance', (req, res) => {
-    const balance = wallet.calculateBalance(bc, wallet.publicKey);
-    res.json(balance);
+    res.json(wallet.calculateBalance(bc, wallet.publicKey));
 });
 
 app.post('/address-balance', (req, res) => {

@@ -12,8 +12,10 @@ class Wallet{
         this.items = [];
     }
 
-    getBalance(){
-        return this.balance;
+    toString(){
+        return `wallet
+        publicKey: ${this.publicKey}
+        balance: ${this.balance}`
     }
 
     getItems(){
