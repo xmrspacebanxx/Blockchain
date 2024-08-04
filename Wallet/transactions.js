@@ -39,14 +39,6 @@ class Transaction{
         ]);
     }
 
-    static rewardTransaction(minerWallet, senderWallet){
-        return Transaction.transactionWithOutputs(senderWallet, [{
-            amount: MINING_REWARD,
-            address: minerWallet.publicKey
-        }
-        ]);
-    }
-
     static signTransaction(transaction, senderWallet){
         
         transaction.input = {

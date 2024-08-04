@@ -7,7 +7,6 @@ const Blockchain = require('../Blockchain/index');
 const P2pServer = require('./p2pServer');
 const HTTP_PORT = process.env.HTTP_PORT || 3001;
 const bodyParser = require('body-parser');
-const Miner = require('../App/miner');
 
 const app = express();
 const bc = new Blockchain();
@@ -21,7 +20,6 @@ const wallet = new Wallet();
 const tp = new TransactionPool(bc);
 const st = new StorePool();
 const p2pServer = new P2pServer(bc, tp, st);
-const miner = new Miner(bc, tp, wallet, p2pServer);
 
 const tx = wallet.publicKey;
 const fp = './App/public/images/pk.png';
@@ -41,30 +39,6 @@ app.get('/blocks', (req, res)=>{
     res.json(bc.chain);
 });
 
-// Function to load blockchain from file
-function loadBlockchain() {
-    if (fs.existsSync('blockchain.json')) {
-        const data = fs.readFileSync('blockchain.json');
-        const chainData = JSON.parse(data);
-        bc.replaceChain(chainData);
-    }
-}
-
-// Function to save blockchain to file
-function saveBlockchain() {
-    fs.writeFileSync('blockchain.json', JSON.stringify(bc.chain, null, 2));
-}
-
-// Load blockchain initially
-loadBlockchain();
-
-app.post('/mine', (req, res) => {
-    const block = bc.addBlock(req.body.data);
-    console.log(`New block added: ${block.toString()}`);
-    p2pServer.syncChains();
-    res.redirect('/blocks');
-});
-
 app.get('/transactions',(req, res) => {
     res.json(tp.transactions);
 });
@@ -76,44 +50,13 @@ app.post('/transact', (req, res) => {
     res.redirect('/transactions');
 });
 
-app.post('/miner-transactions', (req, res) => {
-    const block = miner.mine();
-    console.log(`Addeed new block ${block}`);
-    saveBlockchain();
-    res.redirect('/blocks');
-});
-
-// Routes for mining control
-app.post('/start-mining', (req, res) => {
-    miner.startMining();
-    res.json({ status: 'Mining started' });
-});
-
-app.post('/stop-mining', (req, res) => {
-    miner.stopMining();
-    res.json({ status: 'Mining stopped' });
-});
-
 app.get('/public-key', (req, res) => {
     res.json(wallet.publicKey);
+    console.log(wallet.publicKey);
 });
 
 app.get('/balance', (req, res) => {
     res.json(wallet.calculateBalance(bc, wallet.publicKey));
-});
-
-app.post('/address-balance', (req, res) => {
-    res.json(wallet.calculateBalance(bc, req.body.address));
-});
-
-app.post('/wallets', (req, res) => {
-    const newWallet = walletManager.newWallet();
-    res.status(201).json(newWallet);
-});
-
-app.get('/wallets', (req, res) => {
-    const wallets = walletManager.listWallets();
-    res.status(200).json(wallets);
 });
 
 // Route to add an item to the pool

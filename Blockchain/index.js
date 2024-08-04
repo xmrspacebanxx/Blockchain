@@ -10,21 +10,6 @@ class Blockchain{
         return this.chain[this.chain.length -1];
     }
 
-    addBlock(data){
-        const block = Block.mineBlock(this.getLastBlock(), data);
-        this.isValidBlock(block);
-        return block;
-    }
-
-    isValidBlock(block){
-        const lastBlock = this.getLastBlock;
-        if(lastBlock.lastHash == block.lastHash){
-            return;
-        } else {
-            return block;
-        }
-    }
-
     isValidChain(chain) {
         if (JSON.stringify(chain[0]) !== JSON.stringify(Block.genesis())) {
             console.log('Genesis block does not match');

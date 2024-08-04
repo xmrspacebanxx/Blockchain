@@ -46,12 +46,6 @@ class Wallet{
         return transaction;
     }    
 
-    static blockchainWallet(){
-        const blockchainWallet = new this();
-        blockchainWallet.address = 'xmrspacebanxx-00000XXX';
-        return blockchainWallet;
-    }
-
     calculateBalance(blockchain, address) {
         let balance = 0; // Empezamos con balance en 0 en vez de this.balance
         let transactions = [];

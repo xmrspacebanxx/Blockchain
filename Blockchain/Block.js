@@ -38,37 +38,6 @@ class Block {
         return new this(timestamp, lastHash, '0'.repeat(difficulty) + hash.substring(difficulty), data, nonce, difficulty, 0);
     }
 
-    static mineBlock(lastBlock, data, nonceStart, nonceEnd, controlFlag) {
-        let hash, timestamp;
-        const lastHash = lastBlock.hash;
-        let { difficulty } = lastBlock;
-        let nonce = nonceStart;
-        let t1 = Date.now();
-
-        do {
-            // Verificar si se ha encontrado un bloque válido
-            if (controlFlag.found) {
-                parentPort.postMessage(null);
-                return;
-            }
-            nonce++;
-            if (nonce > nonceEnd) {
-                nonce = nonceStart;
-            }
-            timestamp = Date.now();
-            difficulty = Block.adjustDifficulty(lastBlock, timestamp);
-            hash = this.hash(timestamp, lastHash, data, nonce, difficulty);
-
-        } while (hash.substring(0, difficulty) !== '0'.repeat(difficulty));
-
-        let t2 = Date.now();
-        let processTime = t2 - t1;
-        controlFlag.found = true;
-
-        const block = new this(timestamp, lastHash, '0'.repeat(difficulty) + hash.substring(difficulty), data, nonce, difficulty, processTime);
-        parentPort.postMessage({ block, transactions: data });
-    }
-
     static hash(timestamp, lastHash, data, nonce, difficulty){
         return ChainUtil.hash(`${timestamp}${lastHash}${JSON.stringify(data)}${nonce}${difficulty}`).toString();
     }
@@ -79,11 +48,6 @@ class Block {
         return '0'.repeat(difficulty) + hash.substring(difficulty);
     }
     
-    static adjustDifficulty(lastBlock, currentTime){
-        let { difficulty } = lastBlock;
-        difficulty = lastBlock.timestamp + MINE_RATE > currentTime ? difficulty + 1: difficulty - 1;
-        return Math.max(difficulty, 6);
-    }
 
 }
 
