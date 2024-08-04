@@ -1,13 +1,15 @@
 
+const { parentPort } = require('worker_threads');
 const ChainUtil = require('../chain-utils');
 const {DIFFICULTY, MINE_RATE} = require('../config');
+
 
 class Block {
 
     constructor(timestamp, lastHash, hash, data, nonce, difficulty, processTime) {
         this.timestamp = timestamp;
         this.lastHash = lastHash;
-        this.hash = '0'.repeat(difficulty) + hash.substring(difficulty);
+        this.hash = hash;
         this.data = data;
         this.nonce = nonce;
         this.difficulty = difficulty || DIFFICULTY;
@@ -32,26 +34,38 @@ class Block {
         const nonce = 0;
         const difficulty = DIFFICULTY;
         const data = [];
-        const hash = "0000000892fba17d92ff34f0a2ebc27fc9d2f0c79176795a41c1eb67afe70e10";
-        return new this(timestamp, lastHash, hash, data, nonce, difficulty, 0);
+        const hash = Block.hash(timestamp, lastHash, data, nonce, difficulty);
+        return new this(timestamp, lastHash, '0'.repeat(difficulty) + hash.substring(difficulty), data, nonce, difficulty, 0);
     }
 
-    static mineBlock(lastBlock, data){
+    static mineBlock(lastBlock, data, nonceStart, nonceEnd, controlFlag) {
         let hash, timestamp;
         const lastHash = lastBlock.hash;
         let { difficulty } = lastBlock;
-        let nonce = 0;
+        let nonce = nonceStart;
         let t1 = Date.now();
-        do{
-            nonce++;
+
+        do {
+            // Verificar si se ha encontrado un bloque válido
+            if (controlFlag.found) {
+                parentPort.postMessage(null);
+                return;
+            }
             timestamp = Date.now();
             difficulty = Block.adjustDifficulty(lastBlock, timestamp);
             hash = this.hash(timestamp, lastHash, data, nonce, difficulty);
-            // console.log(hash);
-        } while (hash.substring(0, difficulty) != '0'.repeat(difficulty));
+            nonce++;
+            if (nonce > nonceEnd) {
+                nonce = nonceStart;
+            }
+        } while (hash.substring(0, difficulty) !== '0'.repeat(difficulty));
+
         let t2 = Date.now();
         let processTime = t2 - t1;
-        return new this(timestamp, lastHash, hash, data, nonce, difficulty, processTime);
+        controlFlag.found = true;
+
+        const block = new this(timestamp, lastHash, '0'.repeat(difficulty) + hash.substring(difficulty), data, nonce, difficulty, processTime);
+        parentPort.postMessage({ block, transactions: data });
     }
 
     static hash(timestamp, lastHash, data, nonce, difficulty){
@@ -60,8 +74,10 @@ class Block {
 
     static blockHash(block) {
         const { timestamp, lastHash, data, nonce, difficulty } = block;
-        return this.hash(timestamp, lastHash, data, nonce, difficulty);
+        const hash = this.hash(timestamp, lastHash, data, nonce, difficulty);
+        return '0'.repeat(difficulty) + hash.substring(difficulty);
     }
+    
 
     static adjustDifficulty(lastBlock, currentTime){
         let { difficulty } = lastBlock;
