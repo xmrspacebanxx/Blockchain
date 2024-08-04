@@ -53,7 +53,7 @@ class Block {
             }
             timestamp = Date.now();
             difficulty = Block.adjustDifficulty(lastBlock, timestamp);
-            hash = Block.hash(timestamp, lastHash, data, nonce, difficulty);
+            hash = this.hash(timestamp, lastHash, data, nonce, difficulty);
             nonce++;
             if (nonce > nonceEnd) {
                 nonce = nonceStart;
@@ -74,7 +74,7 @@ class Block {
 
     static blockHash(block) {
         const { timestamp, lastHash, data, nonce, difficulty } = block;
-        const hash = Block.hash(timestamp, lastHash, data, nonce, difficulty);
+        const hash = this.hash(timestamp, lastHash, data, nonce, difficulty);
         return '0'.repeat(difficulty) + hash.substring(difficulty);
     }
     
