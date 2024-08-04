@@ -64,7 +64,7 @@ class Block {
         let processTime = t2 - t1;
         controlFlag.found = true;
 
-        const block = new this(timestamp, lastHash, hash, data, nonce, difficulty, processTime);
+        const block = new this(timestamp, lastHash, '0'.repeat(difficulty) + hash.substring(difficulty), data, nonce, difficulty, processTime);
         parentPort.postMessage({ block, transactions: data });
     }
 
@@ -74,7 +74,8 @@ class Block {
 
     static blockHash(block) {
         const { timestamp, lastHash, data, nonce, difficulty } = block;
-        return this.hash(timestamp, lastHash, data, nonce, difficulty);
+        const hash = this.hash(timestamp, lastHash, data, nonce, difficulty);
+        return '0'.repeat(difficulty) + hash.substring(difficulty);
     }
     
     static adjustDifficulty(lastBlock, currentTime){
