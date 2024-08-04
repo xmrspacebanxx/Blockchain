@@ -51,13 +51,14 @@ class Block {
                 parentPort.postMessage(null);
                 return;
             }
-            timestamp = Date.now();
-            difficulty = Block.adjustDifficulty(lastBlock, timestamp);
-            hash = this.hash(timestamp, lastHash, data, nonce, difficulty);
             nonce++;
             if (nonce > nonceEnd) {
                 nonce = nonceStart;
             }
+            timestamp = Date.now();
+            difficulty = Block.adjustDifficulty(lastBlock, timestamp);
+            hash = this.hash(timestamp, lastHash, data, nonce, difficulty);
+
         } while (hash.substring(0, difficulty) !== '0'.repeat(difficulty));
 
         let t2 = Date.now();
