@@ -32,8 +32,8 @@ class Block {
         const nonce = 0;
         const difficulty = DIFFICULTY;
         const data = [];
-        const hash = Block.hash(timestamp, lastHash, data, nonce, difficulty);
-        return new this(timestamp, lastHash, '0000000' + hash.substring(7), data, nonce, difficulty, 0);
+        const hash = "0000000892fba17d92ff34f0a2ebc27fc9d2f0c79176795a41c1eb67afe70e10";
+        return new this(timestamp, lastHash, hash, data, nonce, difficulty, 0);
     }
 
     static mineBlock(lastBlock, data){
