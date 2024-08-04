@@ -5,7 +5,7 @@ const Wallet = require('../Wallet/index');
 class StorePool {
 
     constructor(){
-        this.items = [];
+        this.items = [Item.genesis()];
     }
 
     addItem( emoji, name, price, seller){
@@ -41,15 +41,20 @@ class StorePool {
             return false;
         }
         for(let i=1; i < items.length; i++){
-            
+            const item = items[i];
+            const wallet = new Wallet();
+            if(item.seller !== wallet.publicKey){
+                return false;
+            }
         }
+        return true;
     }
 
     replaceItems(newItems){
         if(newItems.length <= this.items.length){
             console.log('Received store is not longer than current store');
             return;
-        } else if(!this.isValidItems(newItems)){
+        } else if(this.isValidItems(newItems)){
             console.log('the received store is not valid');
         }
         console.log('Replacing the received store...');

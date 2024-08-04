@@ -302,17 +302,31 @@ h2 {
     width: 100%;
     background-color: #222; /* Fondo oscuro */
     border: 1px solid #444; /* Borde gris oscuro */
-    border-radius: 5px;
+    border-radius: 2.5px;
     overflow: hidden;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 3px 5px rgba(0, 0, 0, 0.5);
     position: relative;
-    height: 5px; /* Altura de la barra de progreso */
+    height: 2.5px; /* Altura de la barra de progreso */
 }
 
 #progress-bar {
-    width: 0%; /* Ancho inicial */
+    width: 100%; /* Ancho inicial */
     height: 100%; /* Altura completa */
-    background: linear-gradient(90deg, rgba(38,198,218,1) 0%, rgba(3,218,198,1) 100%); /* Gradiente azul/verde */
-    transition: width 0.4s ease; /* Transición más suave */
+    background: linear-gradient(90deg, rgb(140, 141, 141) 0%, rgb(191, 194, 187) 100%); /* Gradiente azul/verde */
+    animation: progressAnimation 2s linear infinite;
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: none; /* Oculto por defecto */
 }
+
+@keyframes progressAnimation {
+    0% {
+        transform: translateX(-100%);
+    }
+    100% {
+        transform: translateX(100%);
+    }
+}
+
 

@@ -200,26 +200,69 @@ async function buyItem(event) {
     document.getElementById('buy').textContent = data;
 }
 
+let miningInterval;
+const MINING_SPEED = 50; // Velocidad de la barra de progreso (menor es más rápido)
+
 async function startMining() {
-    const response = await fetch('http://localhost:3000/start-mining', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
+    try {
+        const response = await fetch('http://localhost:3000/start-mining', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        if(response.ok) {
+            document.getElementById('progress-bar').style.display = 'block'; // Mostrar la barra de progreso
+            updateProgressBar();
+            const data = await response.text();
+            document.getElementById('start').textContent = data;    
+        } else {
+            console.error('Error starting mining:', response.statusText);
         }
-    });
-    const data = await response.text();
-    document.getElementById('start').textContent = data;
+    } catch (error) {
+        console.error('Error starting mining:', error);
+    }
 }
 
 async function stopMining() {
-    const response = await fetch('http://localhost:3000/stop-mining', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
+    clearInterval(miningInterval);
+    try {
+        const response = await fetch('http://localhost:3000/stop-mining', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        if(response.ok) {
+            resetProgressBar();
+            const data = await response.text();
+            document.getElementById('stop').textContent = data;        
+        } else {
+            console.error('Error stopping mining:', response.statusText);
+        }    
+    } catch (error) {
+        console.error('Error stopping mining:', error);
+    }
+}
+
+function updateProgressBar() {
+    const progressBar = document.getElementById('progress-bar');
+    progressBar.style.width = '0%';
+
+    let width = 0;
+    miningInterval = setInterval(() => {
+        if (width >= 100) {
+            width = 0; // Reset the width when it reaches 100%
+        } else {
+            width += 1; // Increment the width
         }
-    });
-    const data = await response.text();
-    document.getElementById('stop').textContent = data;
+        progressBar.style.width = width + '%';
+    }, MINING_SPEED); // Update the progress bar based on the mining speed
+}
+
+function resetProgressBar() {
+    const progressBar = document.getElementById('progress-bar');
+    progressBar.style.width = '0%';
 }
 
 async function getTransactions() {
@@ -259,54 +302,4 @@ function displayTransactions(transactions) {
     });
 }
 
-
-const API_URL = 'http://localhost:3000';
-
-// Fetch available items and populate the list
-function loadAvailableItems() {
-    fetch(`${API_URL}/items`)
-        .then(response => response.json())
-        .then(data => {
-            const itemsList = document.getElementById('available-items');
-            const itemSelect = document.getElementById('item-select');
-            itemsList.innerHTML = '';
-            itemSelect.innerHTML = '';
-
-            data.forEach(item => {
-                const listItem = document.createElement('li');
-                listItem.textContent = `Item: ${item.emoji}, ID: ${item.id}, Name: ${item.name}, Price: ${item.price}`;
-                itemsList.appendChild(listItem);
-
-                const option = document.createElement('option');
-                option.value = item.id;
-                option.textContent = `${item.emoji} ${item.name} (Price: ${item.price})`;
-                itemSelect.appendChild(option);
-            });
-        })
-        .catch(error => {
-            console.error('Error:', error);
-        });
-}
-
-// Event listener for loading wallet items
-document.getElementById('load-wallet-items').addEventListener('click', function() {
-    fetch(`${API_URL}/wallet-items`)
-        .then(response => response.json())
-        .then(data => {
-            const itemsList = document.getElementById('wallet-items');
-            itemsList.innerHTML = '';
-            
-            data.forEach(item => {
-                const listItem = document.createElement('li');
-                listItem.textContent = `ITEM: ${item.emoji}, ID: ${item.id}, Name: ${item.name}, Price: ${item.price}`;
-                itemsList.appendChild(listItem);
-            });
-        })
-        .catch(error => {
-            console.error('Error:', error);
-        });
-});
-
-// Load available items on page load
-window.onload = loadAvailableItems;
 

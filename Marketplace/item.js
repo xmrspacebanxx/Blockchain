@@ -19,6 +19,9 @@ class Item {
                 Price: ${this.price}`
     }
 
+    static genesis(){
+        return new this('🪨', 'Rock', 161000000, 'xmrspacebanxx', false);
+    }
     
 
 

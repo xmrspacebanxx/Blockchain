@@ -10,6 +10,7 @@ const bodyParser = require('body-parser');
 const Miner = require('../App/miner');
 
 const app = express();
+
 const bc = new BlockchainClass();
 
 const Wallet = require('../Wallet/index');

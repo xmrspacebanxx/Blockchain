@@ -1,0 +1,8 @@
+{
+  "balance": 0,
+  "keyPair": {
+    "public": "04533eae3ca97fadaa3fa200b93d56d71ed3aa4e9ad4030a84db0dda8a6943d8898e22980099edd572c1abddf3a333a0bab5d2c61bedff16c05e964d35eaef0864",
+    "private": "749005c67a6f22eab92c6dc6b87d1e6247cbf851deb256c1c94bbcf404097280"
+  },
+  "publicKey": "04533eae3ca97fadaa3fa200b93d56d71ed3aa4e9ad4030a84db0dda8a6943d8898e22980099edd572c1abddf3a333a0bab5d2c61bedff16c05e964d35eaef0864"
+}
