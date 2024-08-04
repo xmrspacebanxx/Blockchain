@@ -32,7 +32,7 @@ class Block {
         const nonce = 0;
         const difficulty = DIFFICULTY;
         const data = [];
-        const hash = '0000000a513008892fba17d92ff34f0a2ebc27fc9d2f0c79176795a41c1eb67afe70e10';
+        const hash = '000000a513008892fba17d92ff34f0a2ebc27fc9d2f0c79176795a41c1eb67afe70e10';
         return new this(timestamp, lastHash, hash, data, nonce, difficulty, 0);
     }
 
