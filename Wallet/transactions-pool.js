@@ -46,8 +46,10 @@ class TransactionPool{
         });
     }
 
-    clear(){
-        this.transactions = [];
+    clear(transactions) {
+        transactions.forEach(transaction => {
+            delete this.transactions[transaction.id];
+        });
     }
 }
 

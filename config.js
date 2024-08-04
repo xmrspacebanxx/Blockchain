@@ -7,7 +7,7 @@ let isMining = false;
 let miningTimeout;
 const MINING_INTERVAL = 100; // Delay between mining attempts in milliseconds
 const TARGET_TIME = 10 * 60 * 1000;
-let numWorkers = 4;
+let numWorkers = 5;
 
 module.exports = {DIFFICULTY, MINE_RATE, INITIAL_BALANCE, MINING_REWARD,
      isMining, miningTimeout, MINING_INTERVAL, TARGET_TIME, numWorkers};
