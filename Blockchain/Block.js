@@ -7,7 +7,7 @@ class Block {
     constructor(timestamp, lastHash, hash, data, nonce, difficulty, processTime) {
         this.timestamp = timestamp;
         this.lastHash = lastHash;
-        this.hash = hash;
+        this.hash = '0'.repeat(difficulty) + hash.substring(difficulty);
         this.data = data;
         this.nonce = nonce;
         this.difficulty = difficulty || DIFFICULTY;
