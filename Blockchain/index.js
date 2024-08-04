@@ -12,8 +12,17 @@ class Blockchain{
 
     addBlock(data){
         const block = Block.mineBlock(this.getLastBlock(), data);
-        this.chain.push(block);
+        this.isValidBlock(block);
         return block;
+    }
+
+    isValidBlock(block){
+        const lastBlock = this.getLastBlock;
+        if(lastBlock.lastHash == block.lastHash){
+            return;
+        } else {
+            return block;
+        }
     }
 
     isValidChain(chain) {
@@ -40,7 +49,7 @@ class Blockchain{
         }
         return true;
     }
-
+    
     replaceChain(newChain) {
         if (newChain.length <= this.chain.length) {
             console.log('Received chain is not longer than the current chain');
@@ -53,6 +62,7 @@ class Blockchain{
         this.chain = newChain;
     }
     
+
 }
 
 module.exports = Blockchain;
