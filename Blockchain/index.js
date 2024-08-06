@@ -1,4 +1,5 @@
 
+const fs = require('fs');
 const Block = require('./Block');
 
 class Blockchain{
@@ -61,7 +62,26 @@ class Blockchain{
         console.log('Replacing the received chain...');
         this.chain = newChain;
     }
-    
+
+    // Function to save blockchain to file
+    saveBlockchain() {
+        fs.writeFileSync('../Backup/blockchain.json', JSON.stringify(this.chain, null, 2));
+    }
+
+    // Function to load blockchain from file
+    static loadBlockchain() {
+        if (fs.existsSync('../Backup/blockchain.json')) {
+            const data = fs.readFileSync('../Backup/blockchain.json');
+            const chainData = JSON.parse(data);
+            const bc = new Blockchain();
+            bc.replaceChain(chainData);
+            return bc;
+        } else {
+            const bc = new Blockchain();
+            bc.saveBlockchain();
+            return bc;
+        }
+    }
 
 }
 

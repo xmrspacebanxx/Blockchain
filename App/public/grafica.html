@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blockchain Price Graph</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <canvas id="priceChart" width="800" height="400"></canvas>
+    <script>
+        const jsonData = [
+            {
+                "timestamp": "Space Exploration Genesis Time",
+                "lastHash": "0000000000000000000000000000000000000000000000000000000000000000",
+                "hash": "0000000892fba17d92ff34f0a2ebc27fc9d2f0c79176795a41c1eb67afe70e10",
+                "data": [],
+                "nonce": 0,
+                "difficulty": 7,
+                "processTime": 0,
+                "totalCoins": 0,
+                "price": 0
+            },
+            {
+                "timestamp": 1722898700777,
+                "lastHash": "0000000892fba17d92ff34f0a2ebc27fc9d2f0c79176795a41c1eb67afe70e10",
+                "hash": "000000232bfee0fd83604dc324b7b8949978843dd7a8e8575dce97dd79614598",
+                "data": [],
+                "nonce": 864813894,
+                "difficulty": 6,
+                "processTime": 249717,
+                "totalCoins": 1000,
+                "price": 10
+            },
+            {
+                "timestamp": 1722906437861,
+                "lastHash": "000000232bfee0fd83604dc324b7b8949978843dd7a8e8575dce97dd79614598",
+                "hash": "000000457cd7bf327134d219658fb145901ae4bcfeb438af05c8f603da8edcb4",
+                "data": [],
+                "nonce": 3583517407,
+                "difficulty": 6,
+                "processTime": 172726,
+                "totalCoins": 2000,
+                "price": 15
+            }
+        ];
+
+        // Extract timestamps, totalCoins, and prices
+        const labels = jsonData.map(block => {
+            let date = new Date(block.timestamp);
+            return isNaN(date.getTime()) ? block.timestamp : date.toLocaleString();
+        });
+
+        const totalCoins = jsonData.map(block => block.totalCoins);
+        const prices = jsonData.map(block => block.price);
+
+        // Set up Chart.js
+        const ctx = document.getElementById('priceChart').getContext('2d');
+        const priceChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: totalCoins,
+                datasets: [{
+                    label: 'Price',
+                    data: prices,
+                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                    borderColor: 'rgba(255, 99, 132, 1)',
+                    borderWidth: 1,
+                    fill: true,
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Total Coins in Circulation'
+                        }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'Price'
+                        },
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
+
+

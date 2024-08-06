@@ -1,8 +1,7 @@
 
 const express = require('express');
-const fs = require('fs');
 
-const BlockchainClass = require('../Blockchain/index');
+const Blockchain = require('../Blockchain/index');
 
 const P2pServer = require('./p2pServer');
 const HTTP_PORT = process.env.HTTP_PORT || 3000;
@@ -11,35 +10,18 @@ const Miner = require('../App/miner');
 
 const app = express();
 
-const bc = new BlockchainClass();
+//Initialize blockchain
+const bc = Blockchain.loadBlockchain();
 
-const Wallet = require('../Wallet/index');
+const Wallet  = require('../Wallet/index');
 const WalletManager = require('../Wallet/walletManager');
 const TransactionPool = require('../Wallet/transactions-pool');
 const StorePool = require('../Marketplace/index');
 
 const walletManager = new WalletManager();
-let wallet;
-
-// Function to load wallet from file
-function loadWallet() {
-    if (fs.existsSync('wallet.json')) {
-        const data = fs.readFileSync('wallet.json');
-        const walletData = JSON.parse(data);
-        wallet = Wallet.fromJSON(walletData);
-    } else {
-        wallet = new Wallet();
-        saveWallet(wallet);
-    }
-}
-
-// Function to save wallet to file
-function saveWallet(wallet) {
-    fs.writeFileSync('wallet.json', JSON.stringify(wallet.toJSON(), null, 2));
-}
 
 // Initialize wallet
-loadWallet();
+const wallet = Wallet.loadWallet();
 
 const tp = new TransactionPool(bc);
 const st = new StorePool();
@@ -59,22 +41,7 @@ app.get('/blocks', (req, res)=>{
     res.json(bc.chain);
 });
 
-// Function to load blockchain from file
-function loadBlockchain() {
-    if (fs.existsSync('blockchain.json')) {
-        const data = fs.readFileSync('blockchain.json');
-        const chainData = JSON.parse(data);
-        bc.replaceChain(chainData);
-    }
-}
 
-// Function to save blockchain to file
-function saveBlockchain() {
-    fs.writeFileSync('blockchain.json', JSON.stringify(bc.chain, null, 2));
-}
-
-// Load blockchain initially
-loadBlockchain();
 
 app.post('/mine', (req, res) => {
     const block = bc.addBlock(req.body.data);

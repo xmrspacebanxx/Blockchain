@@ -1,6 +1,6 @@
 
 const Transaction = require('../Wallet/transactions');
-const Wallet = require('../Wallet/index');
+const { Wallet } = require('../Wallet/index');
 
 class TransactionPool{
     constructor(blockchain){
@@ -9,6 +9,10 @@ class TransactionPool{
     }
 
     updateAddTransaction(transaction){
+        if (!transaction || !transaction.id) {
+            console.warn('Invalid transaction detected and discarded');
+            return;
+        }
         let transactionWithId = this.transactions.find(t => t && t.id === transaction.id);
         if(transactionWithId){
             this.transactions[this.transactions.indexOf(transactionWithId)] = transaction;
@@ -46,10 +50,12 @@ class TransactionPool{
         });
     }
 
-    clear(transactions) {
-        transactions.forEach(transaction => {
-            delete this.transactions[transaction.id];
-        });
+    clear() {
+        this.transactions = [];
+    }
+
+    clearTransactions(transactions) {
+        this.transactions = this.transactions.filter(t => !transactions.find(tx => tx.id === t.id));
     }
 }
 

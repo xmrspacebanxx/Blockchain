@@ -1,4 +1,5 @@
 
+const fs = require('fs');
 const { INITIAL_BALANCE }  = require('../config');
 const ChainUtil = require('../chain-utils');
 const Transaction = require('./transactions');
@@ -39,12 +40,6 @@ class Wallet{
         }
         return transaction;
     }    
-
-    static blockchainWallet(){
-        const blockchainWallet = new this();
-        blockchainWallet.address = 'xmrspacebanxx-00000XXX';
-        return blockchainWallet;
-    }
 
     calculateBalance(blockchain, address) {
         let balance = 0; // Empezamos con balance en 0 en vez de this.balance
@@ -105,11 +100,30 @@ class Wallet{
     static fromJSON(data) {
         const wallet = new Wallet();
         wallet.balance = data.balance;
-        wallet.keyPair = ChainUtil.restoreKeyPair(data.keyPair.private);
-        wallet.publicKey = data.keyPair.public;
+        wallet.keyPair = ChainUtil.genKeyPair(data.keyPair);
+        wallet.publicKey = data.publicKey;
         return wallet;
+    }
+
+    // Function to save wallet to file
+    saveWallet(wallet) {
+        fs.writeFileSync('./Wallet/wallet.json', JSON.stringify(wallet.toJSON(), null, 2));
+    }
+
+    // Function to load wallet from file
+    static loadWallet() {
+        if (fs.existsSync('./Wallet/wallet.json')) {
+            const data = fs.readFileSync('./Wallet/wallet.json');
+            const walletData = JSON.parse(data);
+            return Wallet.fromJSON(walletData);
+        } else {
+            const wallet = new Wallet();
+            wallet.saveWallet(wallet);
+            return wallet;
+        }
     }
     
 }
 
 module.exports = Wallet;
+

@@ -52,7 +52,7 @@ class p2pServer{
                     this.transactionPool.updateAddTransaction(data.transaction);
                     break;
                 case MESSAGE_TYPES.clear_transactions:
-                    this.transactionPool.clear();
+                    this.transactionPool.clearTransactions(data.clearTransactions);
                     break;
                 case MESSAGE_TYPES.items:
                     this.storePool.replaceItems(data.items);
