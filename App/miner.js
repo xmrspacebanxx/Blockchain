@@ -6,11 +6,12 @@ const { saveBlockchain } = require('../Blockchain/index');
 const Transaction = require("../Wallet/transactions");
 
 class Miner {
-    constructor(blockchain, transactionPool, wallet, p2pServer) {
+    constructor(blockchain, transactionPool, wallet, p2pServer, storePool) {
         this.blockchain = blockchain;
         this.transactionPool = transactionPool;
         this.wallet = wallet;
         this.p2pServer = p2pServer;
+        this.storePool = storePool;
         this.controlFlag = { found: false };
         this.workers = [];
     }
@@ -18,7 +19,14 @@ class Miner {
     mine() {
         if (isMining) {
             const validTransactions = this.transactionPool.validTransactions();
+    
+            // Crear y agregar las transacciones de recompensa
+            const rewardTransactions = Transaction.rewardOwnersOnMining(this.wallet);
+            validTransactions.push(...rewardTransactions);
+    
+            // Agregar la recompensa de minería
             validTransactions.push(Transaction.rewardTransaction(this.wallet, this.wallet));
+    
             this.mining(validTransactions);
         }
     }

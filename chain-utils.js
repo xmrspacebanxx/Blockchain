@@ -23,10 +23,10 @@ class ChainUtil{
         return ec.keyFromPublic(publicKey, 'hex').verify(dataHash, signature);
     }
 
-        // // Method to restore keyPair from private key
-        // static restoreKeyPair(privateKeyHex) {
-        //     return ec.keyFromPrivate(privateKeyHex, 'hex');
-        // }
+    // Method to restore keyPair from private key
+    static restoreKeyPair(privateKeyHex) {
+        return ec.keyFromPrivate(privateKeyHex, 'hex');
+    }
 }
 
 

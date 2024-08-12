@@ -1,5 +1,6 @@
 
 const express = require('express');
+const path = require('path');
 
 const Blockchain = require('../Blockchain/index');
 
@@ -28,6 +29,7 @@ const st = new StorePool();
 const p2pServer = new P2pServer(bc, tp, st);
 const miner = new Miner(bc, tp, wallet, p2pServer);
 
+app.use(express.static(path.join(__dirname, 'public')));
 app.use(bodyParser.json());
 
 // Middleware para permitir CORS (necesario para desarrollo local)
@@ -80,7 +82,7 @@ app.post('/stop-mining', (req, res) => {
 });
 
 app.get('/public-key', (req, res) => {
-    res.json({publicKey: wallet.publicKey});
+    res.json(wallet.publicKey);
 });
 
 app.get('/balance', (req, res) => {

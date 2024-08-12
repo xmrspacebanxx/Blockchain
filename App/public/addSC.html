@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MetaMask Clone</title>
-    <link rel="stylesheet" href="../public/css/styles.css">
+    <link rel="stylesheet" href="/css/styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
@@ -21,9 +21,9 @@
             <div id="progress-container">
                 <div id="progress-bar">0%</div>
             </div>
-
+            <div id="public-key" class="address"></div>
         </header>
-        
+        <body class="background-container" id="background-container"></body>
         <nav id="buttons" style="display: none;">
             <button class="tab active">Materials</button>
             <button class="tab ">Transactions</button>
@@ -36,7 +36,7 @@
                     <div>
                         <input type="text" id="emoji" name="emoji" required placeholder="emoji">    
                         <input type="text" id="name" name="name" required placeholder="name">
-                        <input type="number" id="price" name="price" required placeholder="price">    
+                        <input type="number" id="price" name="price" required placeholder="price" step="0.01" min="0">    
                         <input type="text" id="seller" name="seller" required placeholder="seller">        
                         <button type="submit"><i class="fa-solid fa-check"></i></button>
                     </div>
@@ -55,7 +55,7 @@
             <button class="footer-btn" onclick="book()"><i class="fa-solid fa-cubes"></i>Blockchain</button>
             <button class="footer-btn" onclick="settings()"><i class="fa-solid fa-gear"></i>Settings</button>
         </footer>
-        <script src="../public/js/app.js"></script>
+        <script src="/js/app.js"></script>
     </div>
 </body>
 </html> 

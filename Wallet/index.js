@@ -100,7 +100,7 @@ class Wallet{
     static fromJSON(data) {
         const wallet = new Wallet();
         wallet.balance = data.balance;
-        wallet.keyPair = ChainUtil.genKeyPair(data.keyPair);
+        wallet.keyPair = ChainUtil.restoreKeyPair(data.keyPair.private);
         wallet.publicKey = data.publicKey;
         return wallet;
     }

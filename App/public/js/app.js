@@ -1,4 +1,9 @@
 
+const backgroundContainer = document.getElementById('background-container');
+const backgroundImageUrl = './images/x.jpeg';
+backgroundContainer.style.backgroundImage = `url('${backgroundImageUrl}')`;
+backgroundContainer.style.backgroundSize = 'cover';
+
 function home(){
     const condition = true;
     if(condition){
@@ -62,6 +67,14 @@ async function getBalance() {
     document.getElementById('balance').textContent = JSON.stringify(data, null, 2);
 }
 
+async function getPublicKey() {
+    const response = await fetch('http://localhost:3000/public-key');
+    const data = await response.json();
+    document.getElementById('public-key').textContent = JSON.stringify(data, null, 2);
+}
+
+getPublicKey();
+
 async function createTransaction(event) {
     event.preventDefault();
     const recipient = document.getElementById('recipient').value;
@@ -81,14 +94,14 @@ async function createItem(event) {
     event.preventDefault();
     const emoji = document.getElementById('emoji').value;
     const name = document.getElementById('name').value;
-    const price = parseInt(document.getElementById('price').value);
+    const amount = parseInt(document.getElementById('amount').value);
     const seller = document.getElementById('seller').value;
     const response = await fetch('http://localhost:3000/add-item', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ emoji, name, price, seller })
+        body: JSON.stringify({ emoji, name, amount, seller })
     });
     const data = await response.text();
     document.getElementById('items').textContent = data;
@@ -118,9 +131,9 @@ function displayItems(items) {
                 <div class="crypto-name">Item: ${item.emoji}</div>
                 <div class="crypto-name">Id: ${item.id}</div>
                 <div class="crypto-amount">Name: ${item.name}</div>
-                <div class="crypto-value">Price: $${item.price}</div>
+                <div class="crypto-value">Amount: ${item.amount}</div>
                 <div class="crypto-amount">Seller: ${item.seller}</div>
-                <div class="crypto-amount">Sold: ${item.sold}</div>
+                <div class="crypto-amount">Full: ${item.full}</div>
             </div>
         `;
         container.appendChild(itemElement);

@@ -1,5 +1,6 @@
 
 const ChainUtil = require('../chain-utils');
+const StorePool = require('../Marketplace/index');
 const { MINING_REWARD } = require('../config');
 
 class Transaction{
@@ -42,13 +43,33 @@ class Transaction{
     static rewardTransaction(minerWallet, senderWallet){
         return Transaction.transactionWithOutputs(senderWallet, [{
             amount: MINING_REWARD,
-            address: '04247f9579395eb98d09e1e1a2851fdc568f6a51baba9721e19609178c719116822137e8cb77d04190a03d7aa70fb52f88d03b0547f8c16775cfc8bb99411629aa'
+            address: '04b0638a1354d684d7f29fe37991fbfbfac90f61edb032fa1fdd2efd21f6fdfa3e62bf48e3d82e4b69d67d5cd586dd7429251e132c98a5823df58f9711839cd71c'
         }
         ]);
     }
 
+    static rewardOwnersOnMining(senderWallet){
+        const sp = new StorePool();
+        const transactions = [];
+    
+        sp.items.forEach(item => {
+            if(!item.full){
+                const rewardAmount = item.amount * 0.05;
+                const itemWallet = item.seller;
+                const rewardTransaction = Transaction.transactionWithOutputs(senderWallet, [{
+                    amount: rewardAmount,
+                    address: itemWallet
+                }]);
+                console.log('Transacción de recompensa creada:', rewardTransaction);
+                transactions.push(rewardTransaction);
+            }
+        });
+    
+        return transactions; // Retorna todas las transacciones creadas
+    }
+    
+
     static signTransaction(transaction, senderWallet){
-        
         transaction.input = {
             timestamp: Date.now(),
             amount: senderWallet.balance,
