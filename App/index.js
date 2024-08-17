@@ -1,6 +1,12 @@
 
 const express = require('express');
 const path = require('path');
+const https = require('https');
+const fs = require('fs');
+const helmet = require('helmet');
+const rateLimit = require('express-rate-limit');
+const csrf = require('csurf');
+const cookieParser = require('cookie-parser');
 
 const Blockchain = require('../Blockchain/index');
 
@@ -8,8 +14,6 @@ const P2pServer = require('./p2pServer');
 const HTTP_PORT = process.env.HTTP_PORT || 3000;
 const bodyParser = require('body-parser');
 const Miner = require('../App/miner');
-
-const app = express();
 
 //Initialize blockchain
 const bc = Blockchain.loadBlockchain();
@@ -29,6 +33,33 @@ const st = new StorePool();
 const p2pServer = new P2pServer(bc, tp, st);
 const miner = new Miner(bc, tp, wallet, p2pServer);
 
+const app = express();
+
+app.use(helmet());
+
+const limiter = rateLimit({
+    windowMs: 15 * 60 * 100,
+    max: 100,
+});
+
+app.use(limiter);
+
+const csrfProtection = csrf({ cookie: true});
+app.use(bodyParser.urlencoded({ extended: false}));
+app.use(cookieParser());
+app.use(csrfProtection);
+
+const privateKey = fs.readFileSync(path.resolve(__dirname, 'certs/localhost.key'), 'utf8');
+const certificate = fs.readFileSync(path.resolve(__dirname, 'certs/localhost.crt'), 'utf8');
+
+const credentials = {
+    key: privateKey,
+    cert: certificate,
+    passphrase: 'xmrspacebanxx' // Asegúrate de reemplazar esto con la contraseña real
+};
+
+const httpsServer = https.createServer(credentials, app);
+
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(bodyParser.json());
 
@@ -39,11 +70,18 @@ app.use((req, res, next) => {
     next();
 });
 
+app.use((req, res, next) => {
+    res.locals.csrfToken = req.csrfToken();
+    next();
+});
+
+app.post('/process', (req, res) => {
+    res.send('Data is being processed');
+});
+
 app.get('/blocks', (req, res)=>{
     res.json(bc.chain);
 });
-
-
 
 app.post('/mine', (req, res) => {
     const block = bc.addBlock(req.body.data);
@@ -133,7 +171,7 @@ app.get('/wallet-items', (req, res) => {
     res.json([]);
 });
 
-app.listen(HTTP_PORT, ()=>{
+httpsServer.listen(HTTP_PORT, ()=>{
     console.log('HTTP server listening on port ' + HTTP_PORT);
 });
 

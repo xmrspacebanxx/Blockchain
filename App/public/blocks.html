@@ -13,9 +13,13 @@
             <div class="wallet-info">
                 <div class="wallet-name">Space Wallet 6.0 <i class="fa-solid fa-meteor"></i></div>
                 <div class="wallet-actions">
-                    <i class="fa-solid fa-user-astronaut"></i> <!-- Icono de perfil -->
+                    <i onclick="stopMining()" class="fa-solid fa-user-astronaut"></i> <!-- Icono de perfil -->
+                    <i onclick="startMining()" class="fa-solid fa-bolt"></i>
                     <i class="fa-solid fa-bars"></i> <!-- Icono de menú -->
                 </div>
+            </div>
+            <div id="progress-container">
+                <div id="progress-bar"></div>
             </div>
             <div id="public-key" class="address"></div>
         </header>
@@ -27,7 +31,7 @@
         
         <main>
             <div class="crypto-book" id="crypto-book">
-                <h3 id="crypto-book-t" >Blockchain View
+                <h3 id="crypto-book-t" class="h3">Blockchain View
                 <button onclick="book()"><i class="fa-solid fa-rotate-right"></i></button></h3>
                 <div class="search-container">
                     <input type="text" id="address-input" placeholder="Enter address to filter">
@@ -38,13 +42,13 @@
         </main>
         
         <footer>
-            <button class="footer-btn" onclick="home()"><i class="fa-solid fa-wallet"></i>Home</button>
-            <button class="footer-btn" onclick="home()"><i class="fa-solid fa-bag-shopping"></i>Shopping</button>
-            <button class="footer-btn" onclick="buy()"><i class="fa-solid fa-meteor"></i>Store</button>
-            <button class="footer-btn" onclick="book()"><i class="fa-solid fa-cubes"></i>Blockchain</button>
-            <button class="footer-btn" onclick="settings()"><i class="fa-solid fa-gear"></i>Settings</button>
+            <button class="footer-btn" id="home"><i class="fa-solid fa-wallet"></i>Home</button>
+            <button class="footer-btn" id="home"><i class="fa-solid fa-bag-shopping"></i>Shopping</button>
+            <button class="footer-btn" id="buy"><i class="fa-solid fa-meteor"></i>Store</button>
+            <button class="footer-btn" id="book"><i class="fa-solid fa-cubes"></i>Blockchain</button>
+            <button class="footer-btn" id="settings"><i class="fa-solid fa-gear"></i>Settings</button>
         </footer>
-        <script src="/js/app.js"></script>
+        <script src="/js/script.js"></script>
 
     </div>
 </body>

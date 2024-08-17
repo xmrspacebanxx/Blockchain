@@ -30,50 +30,10 @@
         </nav>
         
         <main>
-            <div class="balance">
-                <div>
-                    <button onclick="getBalance()" id="balance-button"><i class="fa-solid fa-rotate-right"></i></button>
-                    <h1 id="balance" class="data">******</h1>
-                </div>
+            <h3 class="centered-text">Adriana Gonzalez</h3>
+            <div class="qr-code">
+                <img src="./images/qrcode.png" alt="QR Code">
             </div>
-            <div class="actions" id="actions">
-                <button onclick="send()"><i class="fa-solid fa-satellite-dish"></i> Send</button>
-                <button onclick="receive()"><i class="fa-solid fa-satellite"></i> Receive</button>
-                <button onclick="addSC()"><i class="fa-solid fa-barcode"></i> Add SC</button>
-                <button onclick="buy()"><i class="fa-solid fa-barcode"></i> Buy</button>
-            </div>
-
-            <div class="crypto-buy" id="crypto-buy">
-                <h3 class="Items">Store Pool
-                <button onclick="getItems()"><i class="fa-solid fa-rotate-right"></i></button></h3>
-                <div id="items" class="no-memo">Loading data...</div>
-            </div>
-
-            <div id="modal" class="modal">
-                <div class="modal-content">
-                    <span class="close" id="closeModalBtn">&times;</span>
-                    <h2>Receive <i class="fa-solid fa-meteor"></i></h2>
-                    <div class="warning">
-                        <i class="fa-solid fa-exclamation-triangle"></i> 
-                        The time the transfer takes may vary according to your location, you can verify it in Blockchain.
-                    </div>
-                    <div class="qr-code">
-                        <img src="./images/qrcode.png" alt="QR Code">
-                    </div>
-                    <div class="full-width-text">
-                        <div class="no-memo">Scan the qr code to get the address...</div>
-                    </div>
-                </div>
-                <script>
-                    document.getElementById('closeModalBtn').onclick = function() {
-                        document.getElementById('modal').style.display = 'none';
-                    }
-                    window.onclick = function(event) {
-                        if (event.target == document.getElementById('modal')) {
-                            document.getElementById('modal').style.display = 'none';
-                        }
-                    }
-                </script>
         </main>
         
         <footer>
@@ -83,7 +43,7 @@
             <button class="footer-btn" onclick="book()"><i class="fa-solid fa-cubes"></i>Blockchain</button>
             <button class="footer-btn" onclick="settings()"><i class="fa-solid fa-gear"></i>Settings</button>
         </footer>
-        <script src="/js/app.js"></script>
+        <script src="/js/script.js"></script>
     </div>
 </body>
 </html>

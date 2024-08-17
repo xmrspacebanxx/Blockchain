@@ -4,52 +4,14 @@ const backgroundImageUrl = './images/x.jpeg';
 backgroundContainer.style.backgroundImage = `url('${backgroundImageUrl}')`;
 backgroundContainer.style.backgroundSize = 'cover';
 
-function home(){
-    const condition = true;
-    if(condition){
-        window.location.href = 'index.html';
-    }
-}
-function book(){
-    const condition = true;
-    if(condition){
-        window.location.href = 'blocks.html';
-    }
-}
-function buy(){
-    const condition = true;
-    if(condition){
-        window.location.href = 'buy.html'
-    }
-}
-function settings(){
-    const condition = true;
-    if(condition){
-        window.location.href = 'settings.html'
-    }
-}
-function send(){
-    const condition = true;
-    if(condition){
-        window.location.href = 'send.html'
-    }
-}
-function receive(){
-    const condition = true;
-    if(condition){
-        window.location.href = 'receive.html'
-    }
-}
-function addSC(){
-    const condition = true;
-    if(condition){
-        window.location.href = 'addSC.html'
-    }
+function getCsrfToken() {
+    const match = document.cookie.match(new RegExp('(^| )csrfToken=([^;]+)'));
+    return match ? match[2] : null;
 }
 
 async function getBlocks() {
     try {
-        const response = await fetch('http://localhost:3000/blocks'); // Ajusta la URL según sea necesario
+        const response = await fetch('https://localhost:3000/blocks'); // Ajusta la URL según sea necesario
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -62,13 +24,13 @@ async function getBlocks() {
 }
 
 async function getBalance() {
-    const response = await fetch('http://localhost:3000/balance');
+    const response = await fetch('https://localhost:3000/balance');
     const data = await response.json();
     document.getElementById('balance').textContent = JSON.stringify(data, null, 2);
 }
 
 async function getPublicKey() {
-    const response = await fetch('http://localhost:3000/public-key');
+    const response = await fetch('https://localhost:3000/public-key');
     const data = await response.json();
     document.getElementById('public-key').textContent = JSON.stringify(data, null, 2);
 }
@@ -79,7 +41,7 @@ async function createTransaction(event) {
     event.preventDefault();
     const recipient = document.getElementById('recipient').value;
     const amount = parseInt(document.getElementById('amount').value);
-    const response = await fetch('http://localhost:3000/transact', {
+    const response = await fetch('https://localhost:3000/transact', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -96,7 +58,7 @@ async function createItem(event) {
     const name = document.getElementById('name').value;
     const amount = parseInt(document.getElementById('amount').value);
     const seller = document.getElementById('seller').value;
-    const response = await fetch('http://localhost:3000/add-item', {
+    const response = await fetch('https://localhost:3000/add-item', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -110,7 +72,7 @@ async function createItem(event) {
 
 async function getItems() {
     try {
-        const response = await fetch('http://localhost:3000/items');
+        const response = await fetch('https://localhost:3000/items');
         const data = await response.json();
         displayItems(data);    
     } catch(error) {
@@ -128,12 +90,12 @@ function displayItems(items) {
         itemElement.innerHTML = `
 
             <div class="crypto-info">
-                <div class="crypto-name">Item: ${item.emoji}</div>
-                <div class="crypto-name">Id: ${item.id}</div>
-                <div class="crypto-amount">Name: ${item.name}</div>
-                <div class="crypto-value">Amount: ${item.amount}</div>
-                <div class="crypto-amount">Seller: ${item.seller}</div>
-                <div class="crypto-amount">Full: ${item.full}</div>
+                <div class="crypto-name">---------------------------------------------------------------------------------------------------------------------------------------</div>
+                <div class="crypto-name">Item Id: ${item.id}</div>
+                <div class="crypto-name">Mine: ${item.name}${item.emoji}</div>
+                <div class="crypto-amount">Machine: ${item.amount}</div>
+                <div class="crypto-name">Owner: ${item.seller}</div>
+                <div class="crypto-name">Full: ${item.full}</div>
             </div>
         `;
         container.appendChild(itemElement);
@@ -151,6 +113,7 @@ function displayBlocks(blocks) {
         blockElement.innerHTML = `
         
             <div class="crypto-info">
+                <div class="crypto-value">----------------------------------------------------------------------------------------------------------------------------------------</div>
                 <div class="crypto-name">Timestamp: ${block.timestamp}</div>
                 <div class="crypto-name">Last Hash: ${block.lastHash}</div>
                 <div class="crypto-name">Hash: ${block.hash}</div>
@@ -166,7 +129,7 @@ function displayBlocks(blocks) {
                             <span><strong>Amount:</strong> ${transaction.input.amount}</span>
                             <span><strong>Address:</strong> ${transaction.input.address}</span>
                         </div>
-                        <div class="crypto-value">
+                        <div class="crypto-amount">
                             ${transaction.outputs.map(output => `
                                 <div class="output-info">
                                     <span><strong>Amount:</strong> ${output.amount}</span>
@@ -199,29 +162,34 @@ async function filterBlocks() {
 getBlocks().then(displayBlocks);
 getBlocks();
 
+document.getElementById('buy').addEventListener('click', buyItem);
 async function buyItem(event) {
     event.preventDefault();
     const id = document.getElementById('id').value;
-    const response = await fetch('http://localhost:3000/buy-item', {
+    const response = await fetch('https://localhost:3000/buy-item', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'CSRF-Token': csrfToken
         },
         body: JSON.stringify({ id })
     });
     const data = await response.text();
+    const csrfToken = data.csrfToken;
     document.getElementById('buy').textContent = data;
 }
 
 let miningInterval;
 const MINING_SPEED = 50; // Velocidad de la barra de progreso (menor es más rápido)
 
+document.getElementById('startMining').addEventListener('click', startMining);
 async function startMining() {
     try {
-        const response = await fetch('http://localhost:3000/start-mining', {
+        const response = await fetch('https://localhost:3000/start-mining', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'CSRF-Token': csrfToken
             }
         });
         if(response.ok) {
@@ -240,7 +208,7 @@ async function startMining() {
 async function stopMining() {
     clearInterval(miningInterval);
     try {
-        const response = await fetch('http://localhost:3000/stop-mining', {
+        const response = await fetch('https://localhost:3000/stop-mining', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -280,7 +248,7 @@ function resetProgressBar() {
 
 async function getTransactions() {
     try {
-        const response = await fetch('http://localhost:3000/transactions');
+        const response = await fetch('https://localhost:3000/transactions');
         const data = await response.json();
         displayTransactions(data);    
     } catch(error) {
@@ -314,5 +282,34 @@ function displayTransactions(transactions) {
         container.appendChild(transactionElement);
     });
 }
+
+function showPage(pageId) {
+    var pages = document.querySelectorAll('.page');
+    pages.forEach(function(page) {
+        page.style.display = 'none'; // Oculta todas las páginas
+    });
+    document.getElementById(pageId).style.display = 'block'; // Muestra la página seleccionada
+}
+
+document.querySelectorAll('.footer-btn').forEach(function(button) {
+    button.addEventListener('click', function() {
+        showPage(button.getAttribute('id'));
+    });
+});
+
+document.querySelectorAll('.actions-btn').forEach(function(button) {
+    button.addEventListener('click', function() {
+        showPage(button.getAttribute('id'));
+    });
+});
+
+window.onload = function() {
+    showPage('home'); // Muestra la página 'home' cuando la aplicación carga
+};
+
+// document.getElementById('homehome').addEventListener('click', function() {
+//     location.reload(); // Recarga la página
+// });
+
 
 
