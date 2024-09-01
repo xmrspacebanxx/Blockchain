@@ -62,7 +62,7 @@ class Miner {
         for (let i = 0; i < num; i++) {
             const nonceStart = Math.floor(i * nonceRange);
             const nonceEnd = Math.floor((i + 1) * nonceRange);
-            workers.push(new Worker('../minerWorker.js', {
+            workers.push(new Worker('./minerWorker.js', {
                 workerData: { lastBlock, transactions, nonceStart, nonceEnd, controlFlag: this.controlFlag }
             }));
         }

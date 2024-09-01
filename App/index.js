@@ -11,7 +11,7 @@ const cookieParser = require('cookie-parser');
 const Blockchain = require('../Blockchain/index');
 
 const P2pServer = require('./p2pServer');
-const HTTP_PORT = process.env.HTTP_PORT || 3001;
+const HTTP_PORT = process.env.HTTP_PORT || 3000;
 const bodyParser = require('body-parser');
 const Miner = require('../App/miner');
 
@@ -36,7 +36,7 @@ const p2pServer = new P2pServer(bc, tp, st);
 const miner = new Miner(bc, tp, wallet, p2pServer);
 
 const tx = wallet.publicKey;
-const fp = './public/images/pk.png';
+const fp = './App/public/images/pk.png';
 const QR = new qrCode(tx, fp);
 
 const app = express();
@@ -72,6 +72,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(bodyParser.json());
 
 app.use((req, res, next) => {
+    res.header("Content-Security-Policy", "default-src 'self'; connect-src 'self' https://localhost:3001; script-src 'self' 'unsafe-inline';");
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
     next();

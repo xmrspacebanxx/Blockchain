@@ -2,9 +2,17 @@
   "name": "spacewallet",
   "version": "1.0.0",
   "start": "node spacewallet/App/index.js",
+  "scripts": {
+    "dev-test": "nodemon dev-test",
+    "test": "jest --watchAll",
+    "dev": "nodemon ./App/index.js & ./App/public/script.js & xdg-open https://localhost:3001"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
+  "devDependencies": {
+    "nodemon": "^3.1.0"
+  },
   "dependencies": {
     "bignumber.js": "^9.1.2",
     "cookie-parser": "^1.4.6",
@@ -17,6 +25,8 @@
     "fs": "^0.0.1-security",
     "helmet": "^7.1.0",
     "https": "^1.0.0",
+    "nodemon": "^3.1.4",
+    "open": "^10.1.0",
     "path": "^0.12.7",
     "qrcode": "^1.5.4",
     "uuid": "^10.0.0",

@@ -40,7 +40,7 @@ class Blockchain{
         return true;
     }
 
-/*    replaceChain(newChain) {
+    replaceChain(newChain) {
         if (newChain.length <= this.chain.length) {
             console.log('Received chain is not longer than the current chain');
             return;
@@ -51,7 +51,7 @@ class Blockchain{
         console.log('Replacing the received chain...');
         this.chain = newChain;
     }
-*/
+
 
     saveBlockchain() {
         const directory = path.join(__dirname, '../../Backup');
