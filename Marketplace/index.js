@@ -2,65 +2,59 @@
 const Item = require('./item');
 const Wallet = require('../Wallet/index');
 
-class StorePool {
+class StorePool{
+	constructor(){
+		this.items = [Item.guadeloupe()];
+		this.marketPlace = [];
+	}
 
-    constructor(){
-        this.items = [Item.genesis()];
-    }
+	addItem(emoji, name, price, seller){
+		const item = new Item(emoji, name, price, seller);
+		this.items.push(item);
+		return item;
+	}
 
-    addItem( emoji, name, price, seller){
-        const item = new Item( emoji, name, price, seller);
-        this.items.push(item);
-        return item;
-    }
+	addItemMarketPlace(emoji, name, price, seller){
+		const marketPlace = new Item(emoji, name, price, seller);
+		this.marketPlace.push(marketPlace);
+		return marketPlace;
+	}
 
-    getItems(){
-        return this.items;
-    }
+	getItems(){
+		return this.items;
+	}
 
-    buyItem(id, amount, wallet, bc, tp, p2pServer) {
-        const item = this.items.find(p => p.id === id);
-        if (!item) {
-            throw new Error('Item not found');
-        }
-        const transaction = wallet.createTransaction(item.seller, item.price, bc, tp);
-        if (transaction) {
-            p2pServer.broadcastTransaction(transaction);
-            return { status: 'Item purchased', item };
-        } else {
-            throw new Error('Transaction failed');
-        }
-    }
+	getMarketPlace(){
+		return this.marketPlace;
+	}
 
-    updateItem(){
-        const item = this.items.find(p => p.id === id);
-    }
+	buyMarketPlace(id, amount, wallet, bc, tp, p2pServer){
+		const item = this.marketPlace.find(p => p.id === id);
+		if(!item){
+			throw new Error('Item not found');
+		}
+		const transaction = wallet.createTransaction(item.seller, item.price, bc, tp);
+		if(transaction){
+			p2pServer.broadcastTransaction(transaction);
+			return { status: 'Item purchased',  item };
+		} else{
+			throw new Error('Transaction failed');
+		}
+	}
 
-    isValidItems(items){
-        if(JSON.stringify(items[0]) !== JSON.stringify(Item.genesis())){
-            return false;
-        }
-        for(let i=1; i < items.length; i++){
-            const item = items[i];
-            const wallet = new Wallet();
-            if(item.seller !== wallet.publicKey){
-                return false;
-            }
-        }
-        return true;
-    }
-
-    replaceItems(newItems){
-        if(newItems.length <= this.items.length){
-            console.log('Received store is not longer than current store');
-            return;
-        } else if(this.isValidItems(newItems)){
-            console.log('the received store is not valid');
-        }
-        console.log('Replacing the received store...');
-        this.items = newItems;
-    }
+	replaceMarketPlace(newMarketPlace){
+		if(newMarketPlace.length <= this.marketPlace.length){
+			console.log('Received store is not longer than current store');
+			return;
+		}
+		console.log('Replacing the market place...');
+		this.marketPlace = newMarketPlace;
+	}
 
 }
 
 module.exports = StorePool;
+
+
+
+

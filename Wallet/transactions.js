@@ -1,7 +1,8 @@
 
 const ChainUtil = require('../chain-utils');
 const StorePool = require('../Marketplace/index');
-const { MINING_REWARD } = require('../config');
+const BigNumber = require('bignumber.js');
+const { MINING_REWARD, DIFFICULTY } = require('../config');
 
 class Transaction{
     constructor(){
@@ -12,67 +13,75 @@ class Transaction{
 
     update(senderWallet, recipient, amount){
         const senderOutput = this.outputs.find(output => output.address === senderWallet.publicKey);
-        if(amount > senderOutput.amount){
+        amount = new BigNumber(amount);
+        if(amount.isGreaterThan(senderOutput.amount)){
             console.log(`Amount: ${amount} exceeds balance`);
             return;
         }
-        senderOutput.amount = senderOutput.amount - amount;
+		if(senderWallet.publicKey === recipient){
+			console.log(`Invalid transaction from ${senderWallet.publicKey}`);
+			return;
+		}
+        senderOutput.amount = new BigNumber(senderOutput.amount).minus(amount);;
         this.outputs.push({amount, address: recipient});
         Transaction.signTransaction(this, senderWallet);
     }
 
     static transactionWithOutputs(senderWallet, outputs){
         const transaction = new this();
-        transaction.outputs.push(...outputs);
+        transaction.outputs.push(...outputs.map(output => ({
+            ...output,
+            amount: new BigNumber(output.amount).toString()
+        })));
         Transaction.signTransaction(transaction, senderWallet);
         return transaction;
     }
 
     static newTransaction(senderWallet, recipient, amount){
-        const transaction = new this();
-        if(amount > senderWallet.balance){
+        amount = new BigNumber(amount);
+        if(amount.isGreaterThan(senderWallet.balance)){
             console.log(`Amount ${amount} exceeds balance`);
             return;
         }
+		if(senderWallet.publicKey === recipient){
+			console.log(`Invalid transaction from ${senderWallet.publicKey}`);
+			return;
+		}
         return Transaction.transactionWithOutputs(senderWallet, [
-            { amount: senderWallet.balance - amount, address: senderWallet.publicKey },
-            { amount, address: recipient }
+            { amount: senderWallet.balance.minus(amount).toString(), address: senderWallet.publicKey },
+            { amount: amount.toString(), address: recipient }
         ]);
     }
 
-    static rewardTransaction(minerWallet, senderWallet){
+    static rewardTransaction(minerWallet, senderWallet) {
         return Transaction.transactionWithOutputs(senderWallet, [{
-            amount: MINING_REWARD,
-            address: '04b0638a1354d684d7f29fe37991fbfbfac90f61edb032fa1fdd2efd21f6fdfa3e62bf48e3d82e4b69d67d5cd586dd7429251e132c98a5823df58f9711839cd71c'
-        }
-        ]);
+            amount: new BigNumber(MINING_REWARD).toString(),
+            address: '041b34e837a6a49bad034ca0d7c551fa8a13e7c580cf39f5599c8ae73ee7cd17fac538dc719ff0b7ba2df0570170730604c7a3ba96f4a79f76730a3dfea1cd7165'
+        }]);
     }
 
-    static rewardOwnersOnMining(senderWallet){
-        const sp = new StorePool();
-        const transactions = [];
-    
-        sp.items.forEach(item => {
-            if(!item.full){
-                const rewardAmount = item.amount * 0.05;
-                const itemWallet = item.seller;
-                const rewardTransaction = Transaction.transactionWithOutputs(senderWallet, [{
-                    amount: rewardAmount,
-                    address: itemWallet
-                }]);
-                console.log('Transacción de recompensa creada:', rewardTransaction);
-                transactions.push(rewardTransaction);
-            }
-        });
-    
-        return transactions; // Retorna todas las transacciones creadas
-    }
-    
+    // static rewardOwnersOnMining(senderWallet){
+    //     const sp = new StorePool();
+    //     const transactions = [];
+    //     sp.items.forEach(item => {
+    //         if(!item.full){
+    //             const rewardAmount = item.amount * DIFFICULTY;
+    //             const itemWallet = item.seller;
+    //             const rewardTransaction = Transaction.transactionWithOutputs(senderWallet, [{
+    //                 amount: rewardAmount,
+    //                 address: itemWallet
+    //             }]);
+    //             console.log('Transacción de recompensa creada:', rewardTransaction);
+    //             transactions.push(rewardTransaction);
+    //         }
+    //     });    
+    //     return transactions;
+    // }
 
     static signTransaction(transaction, senderWallet){
         transaction.input = {
             timestamp: Date.now(),
-            amount: senderWallet.balance,
+            amount: senderWallet.balance.toString(),
             address: senderWallet.publicKey,
             signature: senderWallet.sign(ChainUtil.hash(transaction.outputs))
         }
@@ -93,3 +102,4 @@ class Transaction{
 }
 
 module.exports = Transaction;
+

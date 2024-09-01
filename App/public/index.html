@@ -4,18 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Space Wallet 6.0 </title>
-    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="./css/styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body class="background-container" id="background-container">
     <div class="container">
         <header>
             <div class="wallet-info">
-                <div class="wallet-name">Space Wallet 6.0 <i class="fa-solid fa-meteor"></i></div>
+                <div class="wallet-name">Quokka Coin <i class="fa-solid fa-seedling"></i></div>
                 <div class="wallet-actions">
-                    <i id="stopMining" class="fa-solid fa-user-astronaut"></i> <!-- Icono de perfil -->
+                    <i id="newWallet" class="fa-solid fa-user-astronaut"></i>
                     <i id="startMining" class="fa-solid fa-bolt"></i>
-                    <i class="fa-solid fa-bars"></i> <!-- Icono de menú -->
+                    <i id="network" class="fa-solid fa-server"></i>
+                    <i class="fa-solid fa-bars"></i>
                 </div>
             </div>
             <div id="progress-container">
@@ -23,15 +24,15 @@
             </div>
             <div id="public-key" class="address"></div>
         </header>
-        
         <nav id="buttons" style="display: none;">
             <button class="tab active">Materials</button>
             <button class="tab ">Transactions</button>
         </nav>
-        <div id="home" class="page" style="display: block;">
+        <div id="homePage" class="page" style="display: block;">
             <div class="balance">
                 <div>
-                    <button onclick="getBalance()" id="balance-button"><i class="fa-solid fa-rotate-right"></i></button>
+                    <button onclick="getBalance()" id="balance-button">
+			<i class="fa-solid fa-rotate-right"></i></button>
                     <h1 id="balance" class="data">******</h1>
                 </div>
             </div>
@@ -39,34 +40,32 @@
                 <button id="send" class="actions-btn"><i class="fa-solid fa-satellite-dish"></i> Send</button>
                 <button id="receive" class="actions-btn"><i class="fa-solid fa-satellite"></i> Receive</button>
                 <button id="addSC" class="actions-btn"><i class="fa-solid fa-barcode"></i> Add SC</button>
-                <button id="buypage" class="actions-btn"><i class="fa-solid fa-barcode"></i> Buy</button>
+                <button id="buy" class="actions-btn"><i class="fa-solid fa-barcode"></i> Buy</button>
             </div>
-
             <div class="crypto-buy" id="crypto-buy">
-                <h3 class="Items">Rock Pool
-                <button id="getItems"><i class="fa-solid fa-rotate-right"></i></button></h3>
-                <div id="items" class="no-memo"></div>
+                <h3 class="Items">Smarts Contracts:</h3>
+                <div id="items" class="no-memo2">No connection available...</div>
             </div>
         </div>
-        <div id="book" class="page" style="display: block;">
+        <div id="bookPage" class="page" style="display: block;">
             <div class="crypto-book" id="crypto-book">
-                <h3 id="crypto-book-t" class="h3">Blockchain View
-                <button onclick="book()"><i class="fa-solid fa-rotate-right"></i></button></h3>
-                <div class="search-container">
+				<div class="search-container">
+                <h3 id="crypto-book-t" class="h3">Blockchain:</h3>
                     <input type="text" id="address-input" placeholder="Enter address to filter">
                     <button onclick="filterBlocks()">Search</button>
                 </div>
-                <div id="blocks" class="no-memo">Loading data...</div>
+                <div id="blocks" class="no-memo">No connection available...</div>
             </div>
         </div>
-        <div id="addSC" class="page" style="display: block;">
+        <div id="addSCPage" class="page" style="display: block;">
             <div class="crypto-buy" id="crypto-buy">
                 <h3 class="buy-data">Items Data </h3>
                 <form id="items-form" onsubmit="createItem(event)">
                     <div>
                         <input type="text" id="emoji" name="emoji" required placeholder="emoji">    
                         <input type="text" id="name" name="name" required placeholder="name">
-                        <input type="number" id="price" name="price" required placeholder="price" step="0.01" min="0">    
+                        <input type="number" id="price" name="price" 
+								required placeholder="price" step="0.01" min="0">
                         <input type="text" id="seller" name="seller" required placeholder="seller">        
                         <button type="submit"><i class="fa-solid fa-check"></i></button>
                     </div>
@@ -74,10 +73,10 @@
                 <div id="buy" class="no-memo"></div>
                 <h3 class="Items">Store Pool
                 <button onclick="getItems()"><i class="fa-solid fa-rotate-right"></i></button></h3>
-                <div id="items" class="no-memo">Loading data...</div>
+                <div id="items" class="no-memo">No connection available...</div>
             </div>
         </div>
-        <div id="buypage" class="page" style="display: block;">
+        <div id="buyPage" class="page" style="display: block;">
             <div class="crypto-buy" id="crypto-buy">
                 <h3 class="buy-data">Buy Data </h3>
                 <form id="buy-form" onsubmit="buyItem(event)">
@@ -87,41 +86,39 @@
                     </div>
                 </form>
                 <div id="buy" class="no-memo"></div>
-                <h3 class="Items">Store Pool
-                <button onclick="getItems()"><i class="fa-solid fa-print"></i></button></h3>
-                <div id="items" class="no-memo">Loading data...</div>
+                <h3 class="Items">Store Pool</h3>
+                <div id="items" class="no-memo2">No connection available...</div>
             </div>
         </div>
-        <div id="receive" class="page" style="display: block;">
-            <h3 class="centered-text">Adriana Gonzalez</h3>
+        <div id="receivePage" class="page" style="display: block;">
+            <h3 class="centered-text">Quokka Address</Address></h3>
             <div class="qr-code">
-                <img src="./images/qrcode.png" alt="QR Code">
+                <img src="./images/pk.png" alt="QR Code">
             </div>
         </div>
-        <div id="send" class="page" style="display: block;">
+        <div id="sendPage" class="page" style="display: block;">
             <div class="crypto-buy" id="crypto-buy">
                 <h3 class="buy-data">Transfer Data </h3>
                 <form id="transact-form" onsubmit="createTransaction(event)">
                     <div>
                         <input type="text" id="recipient" name="recipient" required placeholder="address">    
-                        <input type="number" id="amount" name="amount" required placeholder="amount">    
-                        <button type="submit"><i class="fa-solid fa-check"></i></button>
+                        <input type="number" id="amount" name="amount" required placeholder="amount" step="any" min="0">    
+                        <button type="submit" id="send"><i class="fa-solid fa-check"></i></button>
                     </div>
                 </form>
                 <h3 class="Items">Transactions Pool
                 <button onclick="getTransactions()"><i class="fa-solid fa-rotate-right"></i></button></h3>
-                <div id="transactions" class="no-memo">No pending transfers...</div>
+                <div id="transactions" class="no-memo">No connection available...</div>
             </div>
         </div>
-        
         <footer class="footer">
-            <button id="home" class="footer-btn" ><i class="fa-solid fa-wallet"></i>Home</button>
-            <button id="home" class="footer-btn" ><i class="fa-solid fa-bag-shopping"></i>MarketPlace</button>
-            <button id="buypage" class="footer-btn" ><i class="fa-solid fa-meteor"></i>Rock Pool</button>
-            <button id="book" class="footer-btn"><i class="fa-solid fa-cubes"></i>Blockchain</button>
-            <button id="settings" class="footer-btn"><i class="fa-solid fa-gear"></i> Settings</button>
+            <button id="homeBtn" class="footer-btn" ><i class="fa-solid fa-wallet"></i>Home</button>
+            <button id="sendPage" class="footer-btn" ><i class="fa-solid fa-rocket"></i>Transfer</button>
+            <button id="receivePage" class="footer-btn" ><i class="fa-solid fa-qrcode"></i>QR</button>
+            <button id="bookBtn" class="footer-btn"><i class="fa-solid fa-cubes"></i>Blockchain</button>
+            <button id="settingsBtn" class="footer-btn"><i class="fa-solid fa-gear"></i> Settings</button>
         </footer>
-        <script src="/js/script.js"></script>         
+        <script src="./js/script.js"></script>         
     </div>
 </body>
 </html>

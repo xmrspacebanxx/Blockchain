@@ -1,17 +1,21 @@
 
 const backgroundContainer = document.getElementById('background-container');
-const backgroundImageUrl = './images/x.jpeg';
+const backgroundImageUrl = '../images/x.jpeg';
 backgroundContainer.style.backgroundImage = `url('${backgroundImageUrl}')`;
 backgroundContainer.style.backgroundSize = 'cover';
 
-function getCsrfToken() {
-    const match = document.cookie.match(new RegExp('(^| )csrfToken=([^;]+)'));
-    return match ? match[2] : null;
+async function fetchCsrfToken() {
+    const response = await fetch('https://localhost:3000/get-csrf-token', {
+        method: 'GET',
+        credentials: 'same-origin'
+    });
+    const data = await response.json();
+    return data.csrfToken;
 }
 
 async function getBlocks() {
     try {
-        const response = await fetch('https://localhost:3000/blocks'); // Ajusta la URL según sea necesario
+        const response = await fetch('https://localhost:3000/blocks');
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -23,10 +27,12 @@ async function getBlocks() {
     }
 }
 
+document.getElementById('balance-button').addEventListener('click', getBalance);
 async function getBalance() {
     const response = await fetch('https://localhost:3000/balance');
     const data = await response.json();
-    document.getElementById('balance').textContent = JSON.stringify(data, null, 2);
+	const balance = data * 1000000;
+    document.getElementById('balance').textContent = `$${balance.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 }
 
 async function getPublicKey() {
@@ -37,19 +43,59 @@ async function getPublicKey() {
 
 getPublicKey();
 
-async function createTransaction(event) {
+document.getElementById('transact-form').addEventListener('submit', async (event) => {
     event.preventDefault();
-    const recipient = document.getElementById('recipient').value;
-    const amount = parseInt(document.getElementById('amount').value);
-    const response = await fetch('https://localhost:3000/transact', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ recipient, amount })
-    });
-    const data = await response.text();
-    getTransactions(data);
+    const csrfToken = await fetchCsrfToken();
+    createTransaction(csrfToken);
+});
+
+async function createTransaction(csrfToken) {
+    try {
+    	const recipient = document.getElementById('recipient').value;
+    	const amount = parseFloat(document.getElementById('amount').value);
+        const response = await fetch('https://localhost:3000/transact', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'CSRF-Token': csrfToken
+            },
+			body: JSON.stringify({ recipient, amount })
+        });
+        if(response.ok) {
+            const data = await response.text();
+    		getTransactions(data);
+        }
+ 		else {
+            console.error('Error send transaction:', response.statusText);
+        }
+    } catch (error) {
+        console.error('Error send transaction:', error);
+    }
+}
+
+document.getElementById('network').addEventListener('click', async () => {
+    const csrfToken = await fetchCsrfToken();
+    network(csrfToken);
+});
+async function network(csrfToken) {
+    try {
+        const response = await fetch('https://localhost:3000/network', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'CSRF-Token': csrfToken
+            }
+        });
+        if(response.ok) {
+            const data = await response.text();
+        }
+        else{
+            console.error('Error starting network:', response.statusText);
+        }
+    } catch (error) {
+        console.error('Error starting network:', error);
+    }
+    
 }
 
 async function createItem(event) {
@@ -69,7 +115,6 @@ async function createItem(event) {
     document.getElementById('items').textContent = data;
 }
 
-
 async function getItems() {
     try {
         const response = await fetch('https://localhost:3000/items');
@@ -80,17 +125,17 @@ async function getItems() {
     }
 }
 
-// Function to create and insert HTML for each item
 function displayItems(items) {
     const container = document.getElementById('items');
-    container.innerHTML = ''; // Clear previous items if any
+    container.innerHTML = '';
     items.forEach(item => {
         const itemElement = document.createElement('div');
         itemElement.classList.add('crypto-item');
         itemElement.innerHTML = `
-
             <div class="crypto-info">
-                <div class="crypto-name">---------------------------------------------------------------------------------------------------------------------------------------</div>
+                <div class="crypto name">--------------------------------------------
+		---------------------------------------------------------------------
+		----------------------</div>
                 <div class="crypto-name">Item Id: ${item.id}</div>
                 <div class="crypto-name">Mine: ${item.name}${item.emoji}</div>
                 <div class="crypto-amount">Machine: ${item.amount}</div>
@@ -111,9 +156,10 @@ function displayBlocks(blocks) {
         const blockElement = document.createElement('div');
         blockElement.classList.add('block');
         blockElement.innerHTML = `
-        
             <div class="crypto-info">
-                <div class="crypto-value">----------------------------------------------------------------------------------------------------------------------------------------</div>
+                <div class="crypto-value">-------------------------------------------------
+		---------------------------------------------------------------------------
+		------------</div>
                 <div class="crypto-name">Timestamp: ${block.timestamp}</div>
                 <div class="crypto-name">Last Hash: ${block.lastHash}</div>
                 <div class="crypto-name">Hash: ${block.hash}</div>
@@ -180,10 +226,14 @@ async function buyItem(event) {
 }
 
 let miningInterval;
-const MINING_SPEED = 50; // Velocidad de la barra de progreso (menor es más rápido)
+const MINING_SPEED = 50;
 
-document.getElementById('startMining').addEventListener('click', startMining);
-async function startMining() {
+document.getElementById('startMining').addEventListener('click', async () => {
+    const csrfToken = await fetchCsrfToken();
+    startMining(csrfToken);
+});
+
+async function startMining(csrfToken) {
     try {
         const response = await fetch('https://localhost:3000/start-mining', {
             method: 'POST',
@@ -193,11 +243,12 @@ async function startMining() {
             }
         });
         if(response.ok) {
-            document.getElementById('progress-bar').style.display = 'block'; // Mostrar la barra de progreso
+            document.getElementById('progress-bar').style.display = 'block';
             updateProgressBar();
             const data = await response.text();
             document.getElementById('start').textContent = data;    
-        } else {
+        }
+ 		else {
             console.error('Error starting mining:', response.statusText);
         }
     } catch (error) {
@@ -220,9 +271,35 @@ async function stopMining() {
             document.getElementById('stop').textContent = data;        
         } else {
             console.error('Error stopping mining:', response.statusText);
-        }    
+        } 
     } catch (error) {
         console.error('Error stopping mining:', error);
+    }
+}
+
+document.getElementById('newWallet').addEventListener('click', async () => {
+    const csrfToken = await fetchCsrfToken();
+    newWallet(csrfToken);
+});
+
+async function newWallet(csrfToken) {
+    try {
+        const response = await fetch('https://localhost:3000/wallets', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'CSRF-Token': csrfToken
+            }
+        });
+        if(response.ok) {
+            const data = await response.text();
+            document.getElementById('wallets').textContent = data;    
+        }
+ else {
+            console.error('Error starting mining:', response.statusText);
+        }
+    } catch (error) {
+        console.error('Error starting mining:', error);
     }
 }
 
@@ -233,12 +310,12 @@ function updateProgressBar() {
     let width = 0;
     miningInterval = setInterval(() => {
         if (width >= 100) {
-            width = 0; // Reset the width when it reaches 100%
+            width = 0;
         } else {
-            width += 1; // Increment the width
+            width += 1;
         }
         progressBar.style.width = width + '%';
-    }, MINING_SPEED); // Update the progress bar based on the mining speed
+    }, MINING_SPEED);
 }
 
 function resetProgressBar() {
@@ -265,7 +342,6 @@ function displayTransactions(transactions) {
         const transactionElement = document.createElement('div');
         transactionElement.classList.add('transaction');
         transactionElement.innerHTML = `
-
             <div class="crypto-info">
                 <div class="crypto-name">Id: ${transaction.id}</div>
                 <div class="crypto-name">Timestamp: ${transaction.input.timestamp}</div>
@@ -284,32 +360,29 @@ function displayTransactions(transactions) {
 }
 
 function showPage(pageId) {
-    var pages = document.querySelectorAll('.page');
-    pages.forEach(function(page) {
-        page.style.display = 'none'; // Oculta todas las páginas
+    document.querySelectorAll('.page').forEach(function(page) {
+        page.style.display = 'none';
     });
-    document.getElementById(pageId).style.display = 'block'; // Muestra la página seleccionada
+    document.getElementById(pageId).style.display = 'block';
 }
 
 document.querySelectorAll('.footer-btn').forEach(function(button) {
     button.addEventListener('click', function() {
-        showPage(button.getAttribute('id'));
+        showPage(button.getAttribute('id').replace('Btn', 'Page'));
     });
 });
 
 document.querySelectorAll('.actions-btn').forEach(function(button) {
     button.addEventListener('click', function() {
-        showPage(button.getAttribute('id'));
+        showPage(button.getAttribute('id') + 'Page');
     });
 });
 
 window.onload = function() {
-    showPage('home'); // Muestra la página 'home' cuando la aplicación carga
+    showPage('homePage');
 };
 
-// document.getElementById('homehome').addEventListener('click', function() {
-//     location.reload(); // Recarga la página
-// });
-
-
+document.getElementById('homeBtn').addEventListener('click', function() {
+     location.reload();
+});
 

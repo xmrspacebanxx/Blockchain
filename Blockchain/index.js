@@ -1,5 +1,6 @@
 
 const fs = require('fs');
+const path = require('path');
 const Block = require('./Block');
 
 class Blockchain{
@@ -11,19 +12,9 @@ class Blockchain{
         return this.chain[this.chain.length -1];
     }
 
-    addBlock(data){
-        const block = Block.mineBlock(this.getLastBlock(), data);
-        this.isValidBlock(block);
-        return block;
-    }
-
-    isValidBlock(block){
-        const lastBlock = this.getLastBlock;
-        if(lastBlock.lastHash == block.lastHash){
-            return;
-        } else {
-            return block;
-        }
+    addBlock(block){
+        this.chain.push(block);
+        this.saveBlockchain();
     }
 
     isValidChain(chain) {
@@ -36,13 +27,11 @@ class Blockchain{
             const block = chain[i];
             const lastBlock = chain[i - 1];
 
-            // Verificar que lastHash coincide
             if (block.lastHash !== lastBlock.hash) {
                 console.log(`Invalid lastHash at block ${i}`);
                 return false;
             }
 
-            // Verificar que el hash del bloque es correcto
             if (block.hash !== Block.blockHash(block)) {
                 console.log(`Invalid hash at block ${i}`);
                 return false;
@@ -50,8 +39,8 @@ class Blockchain{
         }
         return true;
     }
-    
-    replaceChain(newChain) {
+
+/*    replaceChain(newChain) {
         if (newChain.length <= this.chain.length) {
             console.log('Received chain is not longer than the current chain');
             return;
@@ -62,27 +51,34 @@ class Blockchain{
         console.log('Replacing the received chain...');
         this.chain = newChain;
     }
+*/
 
-    // Function to save blockchain to file
     saveBlockchain() {
-        fs.writeFileSync('../Backup/blockchain.json', JSON.stringify(this.chain, null, 2));
+        const directory = path.join(__dirname, '../../Backup');
+        const filePath = path.join(directory, 'blockchain.json');
+        if (!fs.existsSync(directory)) {
+            fs.mkdirSync(directory, { recursive: true });
+        }
+        fs.writeFileSync(filePath, JSON.stringify(this.chain, null, 2));
+        console.log('Blockchain saved to disk.');
     }
 
-    // Function to load blockchain from file
     static loadBlockchain() {
-        if (fs.existsSync('../Backup/blockchain.json')) {
-            const data = fs.readFileSync('../Backup/blockchain.json');
+        const filePath = path.join(__dirname, '../../Backup/blockchain.json');
+        if (fs.existsSync(filePath)) {
+            const data = fs.readFileSync(filePath);
             const chainData = JSON.parse(data);
             const bc = new Blockchain();
-            bc.replaceChain(chainData);
+            bc.chain = chainData;
+            console.log('Loaded chain from file...');
             return bc;
         } else {
+            console.log('No existing blockchain found, initializing new blockchain...');
             const bc = new Blockchain();
             bc.saveBlockchain();
             return bc;
         }
     }
-
 }
 
 module.exports = Blockchain;

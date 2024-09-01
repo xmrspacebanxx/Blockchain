@@ -1,35 +1,25 @@
 {
-  "name": "blockchain",
+  "name": "spacewallet",
   "version": "1.0.0",
-  "main": "index.js",
-  "scripts": {
-    "dev-test": "nodemon dev-test",
-    "test": "jest --watchAll",
-    "dev": "nodemon ./App/index.js & xdg-open https://localhost:3000/index.html"
-  },
+  "start": "node spacewallet/App/index.js",
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "devDependencies": {
-    "jest": "^29.7.0",
-    "nodemon": "^3.1.0"
-  },
   "dependencies": {
-    "body-parser": "^1.20.2",
+    "bignumber.js": "^9.1.2",
     "cookie-parser": "^1.4.6",
     "crypto-js": "^4.2.0",
     "csurf": "^1.11.0",
-    "elliptic": "^6.5.6",
+    "dotenv": "^16.4.5",
+    "elliptic": "^6.5.7",
     "express": "^4.19.2",
     "express-rate-limit": "^7.4.0",
     "fs": "^0.0.1-security",
     "helmet": "^7.1.0",
-    "http": "^0.0.1-security",
     "https": "^1.0.0",
-    "open": "^10.1.0",
     "path": "^0.12.7",
-    "uuid": "^9.0.1",
-    "ws": "^8.16.0"
-  },
-  "description": ""
+    "qrcode": "^1.5.4",
+    "uuid": "^10.0.0",
+    "ws": "^8.18.0"
+  }
 }
