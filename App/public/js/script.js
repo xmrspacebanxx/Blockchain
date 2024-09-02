@@ -87,7 +87,8 @@ async function network(csrfToken) {
             }
         });
         if(response.ok) {
-            const data = await response.text();
+            const data = await response.json();
+            console.log('Network started successfully:', data);
         }
         else{
             console.error('Error starting network:', response.statusText);
