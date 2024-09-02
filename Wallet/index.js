@@ -1,9 +1,11 @@
 
 const fs = require('fs');
+const CryptoJS = require('crypto-js');
 const path = require('path');
 const { INITIAL_BALANCE } = require('../config');
 const ChainUtil = require('../chain-utils');
 const BigNumber = require('bignumber.js');
+const readline = require('readline');
 
 class Wallet{
 	constructor(){
@@ -100,35 +102,53 @@ class Wallet{
 		return wallet;
 	}
 
-	saveWallet(){
-        const directory = path.join(__dirname, '../Wallet');
+    saveWallet(password) {
+        const directory = path.join(__dirname, '../../Backup');
         const filePath = path.join(directory, 'wallet.json');
+
         if (!fs.existsSync(directory)) {
             fs.mkdirSync(directory, { recursive: true });
         }
-        fs.writeFileSync(filePath, JSON.stringify(this.toJSON(), null, 2));
-        console.log('Wallet saved to disk.');
-	}
 
-	static loadWallet(){
-        const filePath = path.join(__dirname, '../Wallet/wallet.json');
-        if (fs.existsSync(filePath)) {
-            const data = fs.readFileSync(filePath);
-            const walletData = JSON.parse(data);
-            console.log('Loaded wallet from file...');
-            return walletData;
-        } else{
-            console.log('No existing wallet found, initializing new wallet...');
-            const wallet = new Wallet();
-            wallet.saveWallet();
-            return wallet;
-        }
-	}
+        const encrypted = CryptoJS.AES.encrypt(JSON.stringify(this.toJSON()), password).toString();
 
+        fs.writeFileSync(filePath, encrypted);
+        console.log('Wallet saved and encrypted to disk.');
+    }
+
+    static loadWallet(password) {
+        return new Promise((resolve, reject) => {
+            const rl = readline.createInterface({
+                input: process.stdin,
+                output: process.stdout
+            });
+
+            rl.question('Enter your wallet password: ', (password) => {
+                const filePath = path.join(__dirname, '../../Backup/wallet.json');
+                try {
+                    if (fs.existsSync(filePath)) {
+                        const encryptedData = fs.readFileSync(filePath, 'utf-8');
+                        const bytes = CryptoJS.AES.decrypt(encryptedData, password);
+                        const decrypted = bytes.toString(CryptoJS.enc.Utf8);
+                        if (!decrypted) throw new Error('Incorrect password or corrupted wallet file.');
+                        const walletData = JSON.parse(decrypted);
+                        console.log('Wallet decrypted and loaded from file...');
+                        resolve(Wallet.fromJSON(walletData));
+                    } else {
+                        console.log('No existing wallet found, initializing new wallet...');
+                        const wallet = new Wallet();
+                        wallet.saveWallet(password);
+                        resolve(wallet);
+                    }
+                } catch (error) {
+                    console.error(error.message);
+                    reject(error);
+                } finally {
+                    rl.close();
+                }
+            });
+        });
+    }
 }
 
 module.exports = Wallet;
-
-
-
-

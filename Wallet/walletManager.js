@@ -25,7 +25,8 @@ class WalletManager{
 	}
 
     saveWallet(wallet) {
-    	const filePath = path.join(__dirname, '../Wallet/wallets.json');
+        const directory = path.join(__dirname, '../../Backup')
+    	const filePath = path.join(directory, 'wallets.json');
     	let existingWallets = [];
 	    if (fs.existsSync(filePath)) {
     	    const data = fs.readFileSync(filePath);
@@ -41,7 +42,7 @@ class WalletManager{
     }
 
     static loadWallets() {
-        const filePath = path.join(__dirname, '../Wallet/wallets.json');
+        const filePath = path.join(__dirname, '../../Backup/wallets.json');
 	    const walletManager = new WalletManager();
     	if (fs.existsSync(filePath)) {
         	const data = fs.readFileSync(filePath);

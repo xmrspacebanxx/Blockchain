@@ -2,7 +2,7 @@
 const ChainUtil = require('../chain-utils');
 const StorePool = require('../Marketplace/index');
 const BigNumber = require('bignumber.js');
-const { MINING_REWARD, DIFFICULTY } = require('../config');
+const { MINING_REWARD, DIFFICULTY, walletMiner } = require('../config');
 
 class Transaction{
     constructor(){
@@ -56,7 +56,7 @@ class Transaction{
     static rewardTransaction(minerWallet, senderWallet) {
         return Transaction.transactionWithOutputs(senderWallet, [{
             amount: new BigNumber(MINING_REWARD).toString(),
-            address: '041b34e837a6a49bad034ca0d7c551fa8a13e7c580cf39f5599c8ae73ee7cd17fac538dc719ff0b7ba2df0570170730604c7a3ba96f4a79f76730a3dfea1cd7165'
+            address: walletMiner
         }]);
     }
 

@@ -27,7 +27,7 @@ class Block {
     }
 
     static genesis(){
-        const timestamp = 'Quokka Coin';
+        const timestamp = 'Quokka Coin 🌱';
         const lastHash = '0'.repeat(64);
         const nonce = 0;
         const difficulty = DIFFICULTY;

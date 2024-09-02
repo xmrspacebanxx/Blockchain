@@ -5,7 +5,7 @@
   "scripts": {
     "dev-test": "nodemon dev-test",
     "test": "jest --watchAll",
-    "dev": "nodemon ./App/index.js & ./App/public/script.js & xdg-open https://localhost:3001"
+    "dev": "nodemon ./App/index.js & xdg-open https://localhost:3000"
   },
   "keywords": [],
   "author": "",
