@@ -75,10 +75,10 @@ class Miner {
     }
 
     adjustWorkers(processTime) {processTime < TARGET_TIME && numWorkers > 1
-        if (processTime > TARGET_TIME) {
+        if (processTime < TARGET_TIME && numWorkers < 10) {
             numWorkers++;
             console.log(`Number of workers equal to ${numWorkers}`);
-        } else if (processTime < TARGET_TIME && numWorkers > 4) {
+        } else if (processTime > TARGET_TIME && numWorkers > 6) {
             numWorkers--;
             console.log(`Number of workers equal to ${numWorkers}`);
         }

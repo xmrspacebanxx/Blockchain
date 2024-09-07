@@ -3,20 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Space Wallet 6.0 </title>
+    <title>New Era Wallet 6.0 </title>
     <link rel="stylesheet" href="./css/styles.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <link rel="icon" href="images/Crystal.ico" type="image/x-icon">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body class="background-container" id="background-container">
     <div class="container">
         <header>
             <div class="wallet-info">
-                <div class="wallet-name">Quokka Coin <i class="fa-solid fa-seedling"></i></div>
+                <div class="wallet-name">Quokka Coin <i class="fa-solid fa-6"></i></div>
+                <div id="percent" class="data"></div>
                 <div class="wallet-actions">
                     <i id="newWallet" class="fa-solid fa-user-astronaut"></i>
                     <i id="startMining" class="fa-solid fa-bolt"></i>
                     <i id="network" class="fa-solid fa-server"></i>
-                    <i class="fa-solid fa-bars"></i>
+                    <i class="fa-solid fa-power-off"></i>
                 </div>
             </div>
             <div id="progress-container">
@@ -31,9 +34,16 @@
         <div id="homePage" class="page" style="display: block;">
             <div class="balance">
                 <div>
-                    <button onclick="getBalance()" id="balance-button">
-			<i class="fa-solid fa-rotate-right"></i></button>
+                    <button onclick="getBalance()" id="balance-button"><i class="fa-solid fa-dollar-sign"></i></button>
+                    <button onclick="getBalance()" id="balance-button"><i class="fa-solid fa-sterling-sign"></i></button>
+                    <button onclick="getBalance()" id="balance-button"><i class="fa-solid fa-euro-sign"></i></button>
+                    <button onclick="getBalance()" id="balance-button"><i class="fa-solid fa-yen-sign"></i></button>
+                    <button onclick="getBalance()" id="balance-button"><i class="fa-solid fa-shekel-sign"></i></button>
+
                     <h1 id="balance" class="data">******</h1>
+                    <div id="quokkas" class="data"></div>
+                    <div id="percent2" class="data"></div>
+
                 </div>
             </div>
             <div class="actions" id="actions">
@@ -42,9 +52,10 @@
                 <button id="addSC" class="actions-btn"><i class="fa-solid fa-barcode"></i> Add SC</button>
                 <button id="buy" class="actions-btn"><i class="fa-solid fa-barcode"></i> Buy</button>
             </div>
-            <div class="crypto-buy" id="crypto-buy">
-                <h3 class="Items">Smarts Contracts:</h3>
-                <div id="items" class="no-memo2">No connection available...</div>
+            <div>
+                <div id="grafica" class="grafica" style="width: 100%; margin: auto;">
+                    <canvas id="amountChart"></canvas>
+                </div>
             </div>
         </div>
         <div id="bookPage" class="page" style="display: block;">
@@ -91,7 +102,7 @@
             </div>
         </div>
         <div id="receivePage" class="page" style="display: block;">
-            <h3 class="centered-text">Quokka Address</Address></h3>
+            <h3 class="centered-text">My Quokka Address:</Address></h3>
             <div class="qr-code">
                 <img src="./images/pk.png" alt="QR Code">
             </div>
@@ -114,11 +125,11 @@
         <footer class="footer">
             <button id="homeBtn" class="footer-btn" ><i class="fa-solid fa-wallet"></i>Home</button>
             <button id="sendPage" class="footer-btn" ><i class="fa-solid fa-rocket"></i>Transfer</button>
-            <button id="receivePage" class="footer-btn" ><i class="fa-solid fa-qrcode"></i>QR</button>
+            <button id="settingsBtn" class="footer-btn"><i class="fa-solid fa-6"></i>Buy Coins</button>
+            <button id="receivePage" class="footer-btn" ><i class="fa-solid fa-qrcode"></i>Receive</button>
             <button id="bookBtn" class="footer-btn"><i class="fa-solid fa-cubes"></i>Blockchain</button>
-            <button id="settingsBtn" class="footer-btn"><i class="fa-solid fa-gear"></i> Settings</button>
         </footer>
-        <script src="./js/script.js"></script>         
+        <script src="./js/script.js"></script>
     </div>
 </body>
 </html>

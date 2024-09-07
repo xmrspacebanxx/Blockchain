@@ -19,7 +19,7 @@ body {
     overflow: auto;
     word-wrap: break-word;
     background-color: #F2F2F2;
-    height: 730px;
+    height: 770px;
 }
 
 *,
@@ -109,9 +109,26 @@ header {
     cursor: pointer;
 }
 
+.success {
+    color:#856404;
+}
+
+.error {
+    color:#b22222 ;
+}
+
+button i {
+    color: inherit;
+}
+
 .actions button:hover {
     color: #57B7F2;
 }
+
+.fa-solid-fa-user-astronaut:hover {
+    color:#57B7F2;
+}
+
 
 nav {
     display: flex;
@@ -217,6 +234,8 @@ footer {
 .footer-btn:hover {
     color: #0583F2;
 }
+
+
 
 .close {
     color: #aaa;
@@ -327,8 +346,9 @@ h3{
 	padding: 10px;
 }
 
-.Items{
-	padding: 10px;
+.grafica{
+    padding: 10px;
+    
 }
 
 #progress-container {
@@ -343,15 +363,15 @@ h3{
 }
 
 #progress-bar {
-    width: 100%;
+    width: 0%; /* Empieza en 0% */
     height: 100%;
     background: linear-gradient(90deg, rgb(140, 141, 141) 0%, rgb(191, 194, 187) 100%);
-    animation: progressAnimation 2s linear infinite;
     position: absolute;
     top: 0;
     left: 0;
-    display: none;
+    display: block; /* Asegura que sea visible */
 }
+
 
 @keyframes progressAnimation {
     0% {
