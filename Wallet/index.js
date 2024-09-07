@@ -104,7 +104,7 @@ class Wallet{
 
     saveWallet(password) {
         const directory = path.join(__dirname, '../../Backup');
-        const filePath = path.join(directory, 'wallet2.json');
+        const filePath = path.join(directory, 'wallet.json');
 
         if (!fs.existsSync(directory)) {
             fs.mkdirSync(directory, { recursive: true });
@@ -124,7 +124,7 @@ class Wallet{
             });
 
             rl.question('Enter your wallet password: ', (password) => {
-                const filePath = path.join(__dirname, '../../Backup/wallet2.json');
+                const filePath = path.join(__dirname, '../../Backup/wallet.json');
                 try {
                     if (fs.existsSync(filePath)) {
                         const encryptedData = fs.readFileSync(filePath, 'utf-8');
