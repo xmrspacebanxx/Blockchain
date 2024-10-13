@@ -89,7 +89,7 @@ class Blockchain{
         return true;
     }
 
-    replaceChain(newChain) {
+    /*replaceChain(newChain) {
         if (newChain.length <= this.chain.length) {
             console.log('Received chain is not longer than the current chain');
             return;
@@ -100,7 +100,7 @@ class Blockchain{
         console.log('Replacing the received chain...');
         this.chain = newChain;
         this.saveBlockchain();
-    }
+    }*/
 
     toJSON() {
         return JSON.stringify(this.chain);
@@ -138,7 +138,7 @@ class Blockchain{
 				const chainData = JSON.parse(data);
 				const bc = new Blockchain();
 				bc.chain = chainData
-                console.log('Loaded chain from file...');
+                console.log('\x1b[32m%s\x1b[0m', 'Loaded chain from file...');
 				return bc;
                 //return Blockchain.fromJSON(chainData);
             } else {
