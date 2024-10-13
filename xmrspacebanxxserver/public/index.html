@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width", initial-scale="1.0">
+    <title>🪙 Onyx - Centralized Global Currency System 🪙</title>
+    <link rel="stylesheet" href="./style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <header>
+        <h2 class="logo">OnyxChain <i class="fa-solid fa-6"></i></h2>
+        <nav class="navigation">
+            <a href="#" class="wallet-link">Balance</a>
+            <a href="#" class="send-link">Transfer</a>
+            <a href="#" class="chart-link">History</a>
+            <button class="btn-Login">Login</button>
+        </nav>
+    </header>
+	    <div class="wrapper">
+        <span class="icon-close">
+            <i class="fa-solid fa-xmark"></i>
+        </span>
+        <div class="form-box login">
+            <h2>Login</h2>
+            <form id="wallet-form" action="#">
+                <div class="input-box">
+                    <span class="icon" ><i class="fa-regular fa-user"></i></span>
+                    <input id="username" type="text" required>
+                    <label>Name</label>
+                </div>
+                <div class="input-box">
+                    <span class="icon" ><i class="fa-solid fa-key"></i></span>
+                    <input id="password" type="password" required>
+                    <label>Key</label>
+                </div>
+                <button type="submit" class="btn">Unlock <i class="fa-solid fa-unlock-keyhole"></i></button>
+            </form>
+            <div id="wallet-result" class="wallet-result"></div>
+        </div>
+        <div class="form-box send">
+            <h2>Transfer</h2>
+            <form id="transact-form" action="/submit" method="post">
+                <div class="input-box">
+                    <span class="icon" ><i class="fa-solid fa-wallet"></i></span>
+                    <input id="recipient" type="text" minlength="130" maxlength="130" required
+                        oninvalid="this.setCustomValidity('Wrong address...')"
+                        oninput="this.setCustomValidity('')">
+                    <label>Address</label>
+                </div>
+                <div class="input-box">
+                    <span class="icon" ><i class="fa-solid fa-sack-dollar"></i></span>
+                    <input id="amount" type="number" required>
+                    <label>Amount</label>
+                </div>
+                <button type="submit" class="btn">Sing <i class="fa-solid fa-signature"></i></button>
+            </form>
+            <div id="transaction-result" class="wallet-result"></div>
+        </div>
+        <div class="form-box wallet">
+            <h3 id="balance">$0.01</h3>
+            <div class="onyx-amount">
+                <span class="icon" ><i class="fa-solid fa-sack-dollar"></i></span>
+                <label id="quokkas">0.000000000</label>
+            </div>
+            <div class="onyx-amount">
+                <span class="icon" ><i class="fa-solid fa-money-bill-1-wave"></i></span>
+                <label id="percent">+0.00%</label>
+            </div>
+        </div>
+        <div id="grafica" class="form-box chart">
+            <canvas id="amountChart"></canvas>
+        </div>
+	</div>
+    <footer><label id="public-key"></label></footer>
+    <script src="./renderer.js"></script>
+</body>
+</html>
