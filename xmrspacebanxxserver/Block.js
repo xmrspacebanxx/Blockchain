@@ -27,7 +27,8 @@ class Block {
     }
 
     static genesis(){
-        const timestamp = '1728806400000';
+        //const timestamp = '1728806400000';
+        const timestamp = 'Bitcoin is not a bit...';
         const lastHash = '0'.repeat(64);
         const nonce = 0;
         const difficulty = DIFFICULTY;
@@ -82,7 +83,8 @@ class Block {
     static adjustDifficulty(lastBlock, currentTime){
         let { difficulty } = lastBlock;
         difficulty = lastBlock.timestamp + MINE_RATE > currentTime ? difficulty + 1: difficulty - 1;
-        return Math.max(difficulty, 1);
+        //return Math.max(difficulty, 1);
+        return Math.max(difficulty, 4);
     }
 }
 

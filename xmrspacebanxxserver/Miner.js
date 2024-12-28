@@ -1,8 +1,9 @@
 
 const { Worker } = require('worker_threads');
 let { isMining, miningTimeout, numWorkers } = require('./config');
-const { MINING_INTERVAL, TARGET_TIME } = require('./config');
+const { MINING_INTERVAL, TARGET_TIME, amountBlocks } = require('./config');
 const Transaction = require("./Transaction");
+
 
 class Miner {
 
@@ -27,21 +28,30 @@ class Miner {
 
     mining(transactions) {
         const lastBlock = this.blockchain.getLastBlock();
+        const indexBlock = this.blockchain.getBlockIndex();
         const nonceRange = Math.pow(2, 32) / numWorkers;
         this.workers = this.createWorkers(numWorkers, lastBlock, transactions, nonceRange);
-        this.workers.forEach((worker) => {
+        this.workers.forEach((worker, index) => {
             worker.on('message', (message) => {
                 if (message) {
-                    const { block, transactions } = message;
                     this.stopAllWorkers();
-					console.log('\x1b[32m%s\x1b[0m','Work finished...');
-                    console.log(`New block added by worker: \nHash: ${block.hash} \nTime: ${new Date().toLocaleString()} \nDifficulty: ${block.difficulty} \nNonce: ${block.nonce} \nProcessTime: ${block.processTime}`);
-                    this.blockchain.addBlock(block);
-                    this.p2pServer.syncChains();
-                    this.transactionPool.clearTransactions(transactions);
-                    this.p2pServer.broadcastClearTransactions();
-                    this.adjustWorkers(block.processTime);
-                    this.intervalMining();
+                    const { block, transactions } = message;
+                    const blockAdded = this.blockchain.addBlock(block);
+                    if(blockAdded){
+                        console.log(`New block added by worker ${index}: \nLastHash: ${block.lastHash}  \nHash: ${block.hash} \nTime: ${new Date().toLocaleString()} \nDifficulty: ${block.difficulty} \nNonce: ${block.nonce} \nProcessTime: ${block.processTime}`);
+                        this.p2pServer.syncChains();
+                        this.transactionPool.clearTransactions(transactions);
+                        this.p2pServer.broadcastClearTransactions();
+                        this.adjustWorkers(block.processTime);
+                        console.log('\x1b[32m%s\x1b[0m','Work finished...');
+                        if ( amountBlocks === indexBlock) {
+                            this.stopMining();
+                        } else {
+                            this.intervalMining();
+                        }
+                    } else {
+                        this.mine();
+                    }
                 } else {
                     console.log('Worker stopped mining as block was found by another worker.');
                 }
@@ -75,10 +85,10 @@ class Miner {
     }
 
     adjustWorkers(processTime) {
-        if (processTime > TARGET_TIME && numWorkers < 7) {
+        if (processTime > TARGET_TIME && numWorkers < 4) {
             numWorkers++;
             console.log('\x1b[35m%s\x1b[0m', `Number of workers equal to ${numWorkers}`);
-        } else if (processTime < TARGET_TIME && numWorkers > 2) {
+        } else if (processTime < TARGET_TIME && numWorkers > 1) {
             numWorkers--;
             console.log(`Number of workers equal to ${numWorkers}`);
         } else {

@@ -12,7 +12,9 @@
   "license": "ISC",
   "dependencies": {
     "bignumber.js": "^9.1.2",
+    "chalk": "^5.4.1",
     "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
     "crypto-js": "^4.2.0",
     "elliptic": "^6.5.7",
     "express": "^4.21.1",

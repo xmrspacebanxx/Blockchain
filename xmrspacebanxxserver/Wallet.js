@@ -2,7 +2,8 @@
 const fs = require('fs');
 const CryptoJS = require('crypto-js');
 const path = require('path');
-const { INITIAL_BALANCE } = require('./config');
+const { INITIAL_BALANCE, walletMiner } = require('./config');
+const Blockchain = require('./Blockchain');
 const ChainUtil = require('./ChainUtil');
 const BigNumber = require('bignumber.js');
 const readline = require('readline');
@@ -17,7 +18,8 @@ class Wallet{
 
 	toString(){
 		return `wallet
-		publicKey: ${this.publicKey}`
+		publicKey: ${this.publicKey}
+		privateKey: ${this.privateKey}`
 	}
 
     sign(datahash){
@@ -25,7 +27,7 @@ class Wallet{
     }
 
 	privateKey(){
-		return this.keyPair.getPrivate();
+		return this.keyPair.getPrivate().encode('hex');
 	}
 
     createTransaction(recipient, amount, blockchain, transactionPool) {
@@ -105,7 +107,7 @@ class Wallet{
 
     saveWallet(password) {
 		const directory = os.homedir();
-        const filePath = path.join(directory, 'MDCCLXXVI.json');
+        const filePath = path.join(directory, 'MDCCLXXVI8.json');
 
         if (!fs.existsSync(directory)) {
             fs.mkdirSync(directory, { recursive: true });
@@ -154,3 +156,23 @@ class Wallet{
 }
 
 module.exports = Wallet;
+
+/*
+const wallet = new Wallet();
+wallet.saveWallet('V:7$1E?[kbmG');
+console.log(wallet.toJSON());
+*/
+/*
+async function main() {
+	const bc = Blockchain.loadBlockchain();
+	try{
+		const wallet = await Wallet.loadWallet();
+		const balance = wallet.calculateBalance(bc, wallet.publicKey);
+		console.log(balance); 
+	} catch(error) {
+		console.error('Error al cargar el balance: ', error.message);
+	}
+}
+
+main();
+*/

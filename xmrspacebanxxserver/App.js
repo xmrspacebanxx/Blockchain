@@ -1,6 +1,7 @@
 
 const express = require('express');
 const app = express();
+const cors = require('cors');
 
 const Blockchain = require('./Blockchain');
 const Wallet = require('./Wallet');
@@ -8,15 +9,16 @@ const TransactionPool = require('./TransactionPool');
 const p2pServer = require('./p2pServer');
 const Miner = require('./Miner');
 
+app.use(cors({ origin: 'http://r5yzdi2cr6jd3bdyxcx54py32ndqbbsjv6m7btgvjloscdpbksqrbcyd.onion' }));
+
 const bc = Blockchain.loadBlockchain();
+const tp = new TransactionPool(bc);
+const server = new p2pServer(bc, tp);
+
 
 Wallet.loadWallet()
 	.then(wallet => {
 		console.log('Wallet succesfully loaded:', wallet);
-		const tp = new TransactionPool(bc);
-		console.log('Transaction Pool ok!');
-		const server = new p2pServer(bc, tp);
-		console.log('Server ok!');
 		const miner = new Miner(bc, tp, wallet, server);
 		console.log('Miner ok!');
 

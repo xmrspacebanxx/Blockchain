@@ -4,6 +4,8 @@ const fs = require('fs');
 const path = require('path');
 const Block = require('./Block');
 const os = require('os');
+const { amountBlocks}= require('./config');
+
 
 class Blockchain{
 
@@ -15,20 +17,34 @@ class Blockchain{
         return this.chain[this.chain.length -1];
     }
 
+    getBlockIndex(){
+        const blockIndex = this.chain.length;
+        return blockIndex;
+    }
+
     addBlock(newBlock){
-        //if(this.isDuplicateNonce(newBlock.nonce)){
-        //    console.log('Invalid nonce');
-        //    return false;
-        //}
+        const blockIndex = this.chain.length;
+
+        if(this.isDuplicateNonce(newBlock.nonce)){
+            console.log('Invalid nonce');
+            return false;
+        }
         if (this.isDuplicateHash(newBlock.hash)) {
             console.log('\x1b[31m%s\x1b[0m', 'Invalid hash');
+            return false;
         }
         if(this.isValidNewBlock(newBlock, this.getLastBlock())){
             this.chain.push(newBlock);
+            console.log('\x1b[31m%s\x1b[0m', `Block ${blockIndex}`);
             if(this.isValidChain(this.chain)){
-                this.saveBlockchain();
-                return true;
-            } else {
+                if(blockIndex === amountBlocks){
+                    this.saveBlockchain();
+                    return true;
+                } else {
+                    return true;
+                }
+        } else {
+                this.chain.pop();
                 console.log('Invalid chain after adding block.');
                 return false;
             }
@@ -50,14 +66,14 @@ class Blockchain{
         return true;
     }
 
-    //isDuplicateNonce(nonce) {
-    //    for (let block of this.chain) {
-    //        if(block.nonce === nonce) {
-    //            return true;
-    //        }
-    //    }
-    //    return false;
-    //}
+    isDuplicateNonce(nonce) {
+        for (let block of this.chain) {
+            if(block.nonce === nonce) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     isDuplicateHash(hash) {
         for (let block of this.chain) {
@@ -85,11 +101,15 @@ class Blockchain{
                 console.log('\x1b[31m%s\x1b[0m', `Invalid hash at block ${i}`);
                 return false;
             }
+            if (block.nonce === this.chain.nonce){
+                console.log('\x1b[31m%s\x1b[0m', `Invalid nonce at block ${i}`);
+                return false;
+            }
         }
         return true;
     }
 
-    /*replaceChain(newChain) {
+    replaceChain(newChain) {
         if (newChain.length <= this.chain.length) {
             console.log('Received chain is not longer than the current chain');
             return;
@@ -100,7 +120,7 @@ class Blockchain{
         console.log('Replacing the received chain...');
         this.chain = newChain;
         this.saveBlockchain();
-    }*/
+    }
 
     toJSON() {
         return JSON.stringify(this.chain);
@@ -114,7 +134,8 @@ class Blockchain{
 
     saveBlockchain() {
 		const directory = os.homedir();
-        const filePath = path.join(directory, 'ONYXCHAIN6.json');
+        //const filePath = path.join(directory, 'ONYXCHAIN6.json');
+        const filePath = path.join(directory, 'Bitcoin.json');
         if (!fs.existsSync(directory)) {
             fs.mkdirSync(directory, { recursive: true });
         }
@@ -127,7 +148,8 @@ class Blockchain{
 
     static loadBlockchain() {
 		const directory = os.homedir();
-        const filePath = path.join(directory, 'ONYXCHAIN6.json');  
+        //const filePath = path.join(directory, 'ONYXCHAIN6.json');
+        const filePath = path.join(directory, 'Bitcoin.json');  
         try {
             if (fs.existsSync(filePath)) {
                 //const encryptedData = fs.readFileSync(filePath, 'utf8');
@@ -137,7 +159,8 @@ class Blockchain{
 				const data = fs.readFileSync(filePath);
 				const chainData = JSON.parse(data);
 				const bc = new Blockchain();
-				bc.chain = chainData
+                bc.replaceChain(chainData);
+				/*bc.chain = chainData*/
                 console.log('\x1b[32m%s\x1b[0m', 'Loaded chain from file...');
 				return bc;
                 //return Blockchain.fromJSON(chainData);
