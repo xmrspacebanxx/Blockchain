@@ -26,6 +26,10 @@ class TransactionPool{
 		return this.transactions.find(t => t && t.input && t.input.address === address);
 	}
 
+	discardInvalidTransactions(){
+		this.transactions = this.validTransactions();
+	}
+
 	validTransactions(){
 		return this.transactions.filter(transaction => {
 			const outputTotal = transaction.outputs.reduce((total, output) => {

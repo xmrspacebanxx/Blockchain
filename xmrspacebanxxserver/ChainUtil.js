@@ -7,23 +7,43 @@ const { v1: uuidv1 } = require('uuid');
 class ChainUtil{
 	
 	static genKeyPair(){
-		return ec.genKeyPair();
+		try {
+			return ec.genKeyPair();
+		} catch (error) {
+			return null;
+		}
 	}
 
 	static id(){
-		return uuidv1();
+		try {
+			return uuidv1();
+		} catch (error) {
+			return null;
+		}
 	}
 
 	static hash(data){
-		return SHA256(JSON.stringify(data)).toString();
+		try {
+			return SHA256(JSON.stringify(data)).toString();
+		} catch (error) {
+			return null;
+		}
 	}
 
 	static verifySignature(publicKey, signature, dataHash){
-		return ec.keyFromPublic(publicKey, 'hex').verify(dataHash, signature);
+		try {
+			return ec.keyFromPublic(publicKey, 'hex').verify(dataHash, signature);
+		} catch (error) {
+			return null;
+		}
 	}
 
 	static restoreKeyPair(privateKeyHex){
-		return ec.keyFromPrivate(privateKeyHex, 'hex');
+		try {
+			return ec.keyFromPrivate(privateKeyHex, 'hex');
+		} catch (error) {
+			return null;
+		}
 	}
 }
 

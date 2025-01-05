@@ -1,7 +1,7 @@
 
 const { Worker } = require('worker_threads');
 let { isMining, miningTimeout, numWorkers } = require('./config');
-const { MINING_INTERVAL, TARGET_TIME, amountBlocks } = require('./config');
+const { MINING_INTERVAL, TARGET_TIME, amountBlocks, minWorkers, maxWorkers } = require('./config');
 const Transaction = require("./Transaction");
 
 
@@ -36,6 +36,7 @@ class Miner {
                 if (message) {
                     this.stopAllWorkers();
                     const { block, transactions } = message;
+                    this.transactionPool.discardInvalidTransactions();
                     const blockAdded = this.blockchain.addBlock(block);
                     if(blockAdded){
                         console.log(`New block added by worker ${index}: \nLastHash: ${block.lastHash}  \nHash: ${block.hash} \nTime: ${new Date().toLocaleString()} \nDifficulty: ${block.difficulty} \nNonce: ${block.nonce} \nProcessTime: ${block.processTime}`);
@@ -59,11 +60,11 @@ class Miner {
             worker.on('error', (error) => {
                 console.error(`Worker error: ${error}`);
             });
-            //worker.on('exit', (code) => {
-            //    if (code !== 0) {
+            worker.on('exit', (code) => {
+                if (code !== 0) {
             //        console.error(`Worker stopped with exit code ${code}`);
-            //    }
-            //});
+                }
+            });
         });
     }
 
@@ -85,10 +86,10 @@ class Miner {
     }
 
     adjustWorkers(processTime) {
-        if (processTime > TARGET_TIME && numWorkers < 4) {
+        if (processTime > TARGET_TIME && numWorkers < maxWorkers) {
             numWorkers++;
             console.log('\x1b[35m%s\x1b[0m', `Number of workers equal to ${numWorkers}`);
-        } else if (processTime < TARGET_TIME && numWorkers > 1) {
+        } else if (processTime < TARGET_TIME && numWorkers > minWorkers) {
             numWorkers--;
             console.log(`Number of workers equal to ${numWorkers}`);
         } else {

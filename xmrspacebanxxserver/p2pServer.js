@@ -16,7 +16,7 @@ const P2P_PORT = process.env.P2P_PORT || 3000;
 const MESSAGE_TYPES = {
     chain: 'CHAIN',
     transaction: 'TRANSACTION',
-    clear_transactions: 'CLEAR_TRANSACTIONS'
+    clearTransactions: 'CLEAR_TRANSACTIONS'
 }
 
 class p2pServer{
@@ -93,7 +93,7 @@ class p2pServer{
 					console.log(`Transaction received from Socket: ${socket._socket.remoteAddress}`);
                     this.transactionPool.updateAddTransaction(data.transaction);
                     break;
-                case MESSAGE_TYPES.clear_transactions:
+                case MESSAGE_TYPES.clearTransactions:
                     this.transactionPool.clearTransactions(data.clearTransactions);
                     break;
             }
@@ -121,12 +121,13 @@ class p2pServer{
     }
 
     broadcastTransaction(transaction){
-        this.sockets.forEach(socket => this.sendTransaction(socket, transaction))
+        this.sockets.forEach(socket => this.sendTransaction(socket, transaction));
     }
 
-    broadcastClearTransactions(){
+    broadcastClearTransactions(minedTransactions){
         this.sockets.forEach(socket => socket.send(JSON.stringify({
-            type: MESSAGE_TYPES.clear_transactions
+            type: MESSAGE_TYPES.clearTransactions,
+            clearTransactions: minedTransactions
         })));
     }
 }

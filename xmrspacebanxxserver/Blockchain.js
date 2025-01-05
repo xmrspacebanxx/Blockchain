@@ -43,7 +43,7 @@ class Blockchain{
                 } else {
                     return true;
                 }
-        } else {
+            } else {
                 this.chain.pop();
                 console.log('Invalid chain after adding block.');
                 return false;
@@ -55,14 +55,16 @@ class Blockchain{
     }
 
     isValidNewBlock(newBlock, lastBlock){
+        const blockIndex = this.chain.length;
         if(newBlock.lastHash !== lastBlock.hash){
-            console.log('\x1b[31m%s\x1b[0m', `Invalid lastHash at block ${newBlock.index}`);
+            console.log('\x1b[31m%s\x1b[0m', `Invalid lastHash at block ${blockIndex}`);
             return false;
         }
         if(newBlock.hash !== Block.blockHash(newBlock)){
-            console.log('\x1b[31m%s\x1b[0m', `Invalid hash at block ${newBlock.index}`);
+            console.log('\x1b[31m%s\x1b[0m', `Invalid hash at block ${blockIndex}`);
             return false;
         }
+        
         return true;
     }
 
@@ -134,8 +136,8 @@ class Blockchain{
 
     saveBlockchain() {
 		const directory = os.homedir();
-        //const filePath = path.join(directory, 'ONYXCHAIN6.json');
-        const filePath = path.join(directory, 'Bitcoin.json');
+        const filePath = path.join(directory, 'ONYXCHAIN6.json');
+        //const filePath = path.join(directory, 'Bitcoin.json');
         if (!fs.existsSync(directory)) {
             fs.mkdirSync(directory, { recursive: true });
         }
@@ -148,8 +150,8 @@ class Blockchain{
 
     static loadBlockchain() {
 		const directory = os.homedir();
-        //const filePath = path.join(directory, 'ONYXCHAIN6.json');
-        const filePath = path.join(directory, 'Bitcoin.json');  
+        const filePath = path.join(directory, 'ONYXCHAIN6.json');
+        //const filePath = path.join(directory, 'Bitcoin.json');  
         try {
             if (fs.existsSync(filePath)) {
                 //const encryptedData = fs.readFileSync(filePath, 'utf8');

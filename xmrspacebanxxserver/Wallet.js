@@ -4,6 +4,7 @@ const CryptoJS = require('crypto-js');
 const path = require('path');
 const { INITIAL_BALANCE, walletMiner } = require('./config');
 const Blockchain = require('./Blockchain');
+const TransactionPool = require('./TransactionPool');
 const ChainUtil = require('./ChainUtil');
 const BigNumber = require('bignumber.js');
 const readline = require('readline');
@@ -163,7 +164,7 @@ wallet.saveWallet('V:7$1E?[kbmG');
 console.log(wallet.toJSON());
 */
 /*
-async function main() {
+async function balance() {
 	const bc = Blockchain.loadBlockchain();
 	try{
 		const wallet = await Wallet.loadWallet();
@@ -173,6 +174,27 @@ async function main() {
 		console.error('Error al cargar el balance: ', error.message);
 	}
 }
-
-main();
+main
+balance();
 */
+
+/*
+async function newTransaction(){
+	const bc = Blockchain.loadBlockchain();
+	const tp = new TransactionPool(bc);
+	const recipient = "";
+	const amount = 100;
+	try {
+		const wallet = await Wallet.loadWallet();
+		const newT = wallet.createTransaction(recipient, new BigNumber (amount), bc, tp);
+		console.log(newT);
+	} catch(error) {
+		console.error('Error en Transaccion: ', error.message);
+	}
+}
+
+newTransaction();
+
+*/
+
+
