@@ -1,79 +1,135 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width", initial-scale="1.0">
-    <title>🪙 Onyx - Centralized Global Currency System 🪙</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Era Wallet 6.0 </title>
     <link rel="stylesheet" href="./style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <link rel="icon" href="images/Crystal.ico" type="image/x-icon">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
-<body>
-    <header>
-        <h2 class="logo"><i class="fa-solid fa-6"></i></h2>
-        <nav class="navigation">
-            <a href="#" class="wallet-link">Balance</a>
-            <a href="#" class="send-link">Transfer</a>
-            <a href="#" class="chart-link">History</a>
-            <button class="btn-Login">Login</button>
+<body class="background-container" id="background-container">
+    <div class="container">
+        <header>
+            <div class="wallet-info">
+                <div class="wallet-name">Quokka Coin <i class="fa-solid fa-6"></i></div>
+                <div id="percent" class="data"></div>
+                <div class="wallet-actions">
+                    <i id="newWallet" class="fa-solid fa-user-astronaut"></i>
+                    <i id="startMining" class="fa-solid fa-bolt"></i>
+                    <i id="network" class="fa-solid fa-server"></i>
+                    <i id="stopMining" class="fa-solid fa-power-off"></i>
+                </div>
+            </div>
+            <div id="progress-container">
+                <div id="progress-bar"></div>
+            </div>
+            <div id="public-key" class="address"></div>
+        </header>
+        <nav id="buttons" style="display: none;">
+            <button class="tab active">Materials</button>
+            <button class="tab ">Transactions</button>
         </nav>
-    </header>
-	    <div class="wrapper">
-        <span class="icon-close">
-            <i class="fa-solid fa-xmark"></i>
-        </span>
-        <div class="form-box login">
-            <h2>Login</h2>
-            <form id="wallet-form" action="#">
-                <div class="input-box">
-                    <span class="icon" ><i class="fa-regular fa-user"></i></span>
-                    <input id="username" type="text" required>
-                    <label>Name</label>
+        <div id="homePage" class="page" style="display: block;">
+            <div class="balance">
+                <div>
+                    <button onclick="getBalance()" id="balance-button"><i class="fa-solid fa-dollar-sign"></i></button>
+                    <button onclick="getBalance()" id="balance-button"><i class="fa-solid fa-sterling-sign"></i></button>
+                    <button onclick="getBalance()" id="balance-button"><i class="fa-solid fa-euro-sign"></i></button>
+                    <button onclick="getBalance()" id="balance-button"><i class="fa-solid fa-yen-sign"></i></button>
+                    <button onclick="getBalance()" id="balance-button"><i class="fa-solid fa-shekel-sign"></i></button>
+
+                    <h1 id="balance" class="data">******</h1>
+                    <div id="quokkas" class="data"></div>
+                    <div id="percent2" class="data"></div>
+
                 </div>
-                <div class="input-box">
-                    <span class="icon" ><i class="fa-solid fa-key"></i></span>
-                    <input id="password" type="password" required>
-                    <label>Key</label>
-                </div>
-                <button type="submit" class="btn">Unlock <i class="fa-solid fa-unlock-keyhole"></i></button>
-            </form>
-            <div id="wallet-result" class="wallet-result"></div>
-        </div>
-        <div class="form-box send">
-            <h2>Transfer</h2>
-            <form id="transact-form" action="/submit" method="post">
-                <div class="input-box">
-                    <span class="icon" ><i class="fa-solid fa-wallet"></i></span>
-                    <input id="recipient" type="text" minlength="130" maxlength="130" required
-                        oninvalid="this.setCustomValidity('Wrong address...')"
-                        oninput="this.setCustomValidity('')">
-                    <label>Address</label>
-                </div>
-                <div class="input-box">
-                    <span class="icon" ><i class="fa-solid fa-sack-dollar"></i></span>
-                    <input id="amount" type="number" required>
-                    <label>Amount</label>
-                </div>
-                <button type="submit" class="btn">Sing <i class="fa-solid fa-signature"></i></button>
-            </form>
-            <div id="transaction-result" class="wallet-result"></div>
-        </div>
-        <div class="form-box wallet">
-            <h3 id="balance">$0.01</h3>
-            <div class="onyx-amount">
-                <span class="icon" ><i class="fa-solid fa-sack-dollar"></i></span>
-                <label id="quokkas">0.000000000</label>
             </div>
-            <div class="onyx-amount">
-                <span class="icon" ><i class="fa-solid fa-money-bill-1-wave"></i></span>
-                <label id="percent">+0.00%</label>
+            <div class="actions" id="actions">
+                <button id="send" class="actions-btn"><i class="fa-solid fa-satellite-dish"></i> Send</button>
+                <button id="receive" class="actions-btn"><i class="fa-solid fa-satellite"></i> Receive</button>
+                <button id="addSC" class="actions-btn"><i class="fa-solid fa-barcode"></i> Add SC</button>
+                <button id="buy" class="actions-btn"><i class="fa-solid fa-barcode"></i> Buy</button>
+            </div>
+            <div>
+                <div id="grafica" class="grafica" style="width: 100%; margin: auto;">
+                    <canvas id="amountChart"></canvas>
+                </div>
             </div>
         </div>
-        <div id="grafica" class="form-box chart">
-            <canvas id="amountChart"></canvas>
+        <div id="bookPage" class="page" style="display: block;">
+            <div class="crypto-book" id="crypto-book">
+				<div class="search-container">
+                <h3 id="crypto-book-t" class="h3">Blockchain:</h3>
+                    <input type="text" id="address-input" placeholder="Enter address to filter">
+                    <button onclick="filterBlocks()">Search</button>
+                </div>
+                <div id="blocks" class="no-memo">No connection available...</div>
+            </div>
         </div>
-	</div>
-    <footer><label id="public-key"></label></footer>
-    <script src="./renderer.js"></script>
+        <div id="addSCPage" class="page" style="display: block;">
+            <div class="crypto-buy" id="crypto-buy">
+                <h3 class="buy-data">Items Data </h3>
+                <form id="items-form" onsubmit="createItem(event)">
+                    <div>
+                        <input type="text" id="emoji" name="emoji" required placeholder="emoji">    
+                        <input type="text" id="name" name="name" required placeholder="name">
+                        <input type="number" id="price" name="price" 
+								required placeholder="price" step="0.01" min="0">
+                        <input type="text" id="seller" name="seller" required placeholder="seller">        
+                        <button type="submit"><i class="fa-solid fa-check"></i></button>
+                    </div>
+                </form>
+                <div id="buy" class="no-memo"></div>
+                <h3 class="Items">Store Pool
+                <button onclick="getItems()"><i class="fa-solid fa-rotate-right"></i></button></h3>
+                <div id="items" class="no-memo">No connection available...</div>
+            </div>
+        </div>
+        <div id="buyPage" class="page" style="display: block;">
+            <div class="crypto-buy" id="crypto-buy">
+                <h3 class="buy-data">Buy Data </h3>
+                <form id="buy-form" onsubmit="buyItem(event)">
+                    <div>
+                        <input type="text" id="id" name="id" required placeholder="Type the id">    
+                        <button type="submit"><i class="fa-solid fa-check"></i></button>
+                    </div>
+                </form>
+                <div id="buy" class="no-memo"></div>
+                <h3 class="Items">Store Pool</h3>
+                <div id="items" class="no-memo2">No connection available...</div>
+            </div>
+        </div>
+        <div id="receivePage" class="page" style="display: block;">
+            <h3 class="centered-text">My Quokka Address:</Address></h3>
+            <div class="qr-code">
+                <img src="./pk.png" alt="QR Code">
+            </div>
+        </div>
+        <div id="sendPage" class="page" style="display: block;">
+            <div class="crypto-buy" id="crypto-buy">
+                <h3 class="buy-data">Transfer Data </h3>
+                <form id="transact-form" onsubmit="createTransaction(event)">
+                    <div>
+                        <input type="text" id="recipient" name="recipient" required placeholder="address">    
+                        <input type="number" id="amount" name="amount" required placeholder="amount" step="any" min="0">    
+                        <button type="submit" id="send"><i class="fa-solid fa-check"></i></button>
+                    </div>
+                </form>
+                <h3 class="Items">Transactions Pool
+                <button onclick="getTransactions()"><i class="fa-solid fa-rotate-right"></i></button></h3>
+                <div id="transactions" class="no-memo">No connection available...</div>
+            </div>
+        </div>
+        <footer class="footer">
+            <button id="homeBtn" class="footer-btn" ><i class="fa-solid fa-wallet"></i>Home</button>
+            <button id="sendPage" class="footer-btn" ><i class="fa-solid fa-rocket"></i>Transfer</button>
+            <button id="settingsBtn" class="footer-btn"><i class="fa-solid fa-6"></i>Buy Coins</button>
+            <button id="receivePage" class="footer-btn" ><i class="fa-solid fa-qrcode"></i>Receive</button>
+            <button id="bookBtn" class="footer-btn"><i class="fa-solid fa-cubes"></i>Blockchain</button>
+        </footer>
+        <script src="./script.js"></script>
+    </div>
 </body>
 </html>

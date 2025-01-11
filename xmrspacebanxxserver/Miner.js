@@ -3,6 +3,7 @@ const { Worker } = require('worker_threads');
 let { isMining, miningTimeout, numWorkers } = require('./config');
 const { MINING_INTERVAL, TARGET_TIME, amountBlocks, minWorkers, maxWorkers } = require('./config');
 const Transaction = require("./Transaction");
+const { exec } = require('child_process');
 
 
 class Miner {
@@ -39,6 +40,7 @@ class Miner {
                     this.transactionPool.discardInvalidTransactions();
                     const blockAdded = this.blockchain.addBlock(block);
                     if(blockAdded){
+                        //exec('play -n synth 0.1 saw 440');
                         console.log(`New block added by worker ${index}: \nLastHash: ${block.lastHash}  \nHash: ${block.hash} \nTime: ${new Date().toLocaleString()} \nDifficulty: ${block.difficulty} \nNonce: ${block.nonce} \nProcessTime: ${block.processTime}`);
                         this.p2pServer.syncChains();
                         this.transactionPool.clearTransactions(transactions);

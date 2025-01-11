@@ -27,8 +27,8 @@ class Block {
     }
 
     static genesis(){
-        const timestamp = '1728806400000';
-        //const timestamp = 'Bitcoin is not a bit...';
+        //const timestamp = '1728806400000';
+        const timestamp = 'Bitcoin is not a bit...';
         const lastHash = '0'.repeat(64);
         const nonce = 0;
         const difficulty = DIFFICULTY;

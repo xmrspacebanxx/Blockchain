@@ -45,7 +45,7 @@ class Wallet{
         if (transaction) {
             transaction.update(this, recipient, amount);
         } else {
-			const Transaction = require('./transactions');
+			const Transaction = require('./Transaction');
             transaction = Transaction.newTransaction(this, recipient, amount);
             transactionPool.updateAddTransaction(transaction);
         }
@@ -129,7 +129,7 @@ class Wallet{
 
 			rl.question('Enter your wallet password: ', (password) => {
 				const directory = os.homedir();
-				const filePath = path.join(directory, 'MDCCLXXVI.json');
+				const filePath = path.join(directory, 'MDCCLXXVI2.json');
             	try {
                 	if (fs.existsSync(filePath)) {
                 	    const encryptedData = fs.readFileSync(filePath, 'utf-8');
@@ -174,15 +174,14 @@ async function balance() {
 		console.error('Error al cargar el balance: ', error.message);
 	}
 }
-main
 balance();
 */
 
 /*
-async function newTransaction(){
+async function newTransaction(){	
 	const bc = Blockchain.loadBlockchain();
 	const tp = new TransactionPool(bc);
-	const recipient = "";
+	const recipient = "hbcrrpp";
 	const amount = 100;
 	try {
 		const wallet = await Wallet.loadWallet();

@@ -1,5 +1,6 @@
 
 const webSocket = require('ws');
+const { NETWORK } = require('./config');
 // const fs = require('fs');
 // const https = require('https');
 
@@ -24,7 +25,7 @@ class p2pServer{
         this.blockchain = blockchain;
         this.transactionPool = transactionPool;
         this.sockets = [];
-        this.network = false;
+        this.network = NETWORK;
     }
 
     listen(){

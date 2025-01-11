@@ -136,8 +136,9 @@ class Blockchain{
 
     saveBlockchain() {
 		const directory = os.homedir();
-        const filePath = path.join(directory, 'ONYXCHAIN6.json');
-        //const filePath = path.join(directory, 'Bitcoin.json');
+        //const directory = path.dirname(__filename); 
+        //const filePath = path.join(directory, 'ONYXCHAIN6.json');
+        const filePath = path.join(directory, 'Bitcoin.json');
         if (!fs.existsSync(directory)) {
             fs.mkdirSync(directory, { recursive: true });
         }
@@ -150,8 +151,9 @@ class Blockchain{
 
     static loadBlockchain() {
 		const directory = os.homedir();
-        const filePath = path.join(directory, 'ONYXCHAIN6.json');
-        //const filePath = path.join(directory, 'Bitcoin.json');  
+        //const directory = path.dirname(__filename);
+        //const filePath = path.join(directory, 'ONYXCHAIN6.json');
+        const filePath = path.join(directory, 'Bitcoin.json');  
         try {
             if (fs.existsSync(filePath)) {
                 //const encryptedData = fs.readFileSync(filePath, 'utf8');
