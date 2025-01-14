@@ -1,6 +1,6 @@
 
 const ChainUtil = require('./ChainUtil');
-const {DIFFICULTY, MINE_RATE, minDifficulty, maxDifficulty} = require('./config');
+const {DIFFICULTY, MINE_RATE, minDifficulty, maxDifficulty, genesisBlock} = require('./config');
 
 class Block {
 
@@ -28,7 +28,8 @@ class Block {
 
     static genesis(){
         //const timestamp = '1728806400000';
-        const timestamp = 'Bitcoin is not a bit...';
+        //const timestamp = 'Bitcoin is not a bit...';
+        const timestamp = genesisBlock;
         const lastHash = '0'.repeat(64);
         const nonce = 0;
         const difficulty = DIFFICULTY;

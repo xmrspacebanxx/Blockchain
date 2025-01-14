@@ -6,7 +6,7 @@ backgroundContainer.style.backgroundImage = `url('${backgroundImageUrl}')`;
 backgroundContainer.style.backgroundSize = 'cover';
 
 async function fetchCsrfToken() {
-    const response = await fetch('https://localhost:3000/get-csrf-token', {
+    const response = await fetch('https://localhost:3001/get-csrf-token', {
         method: 'GET',
         credentials: 'same-origin'
     });
@@ -16,7 +16,7 @@ async function fetchCsrfToken() {
 
 async function getBlocks() {
     try {
-        const response = await fetch('https://localhost:3000/blocks');
+        const response = await fetch('https://localhost:3001/blocks');
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -30,7 +30,7 @@ async function getBlocks() {
 
 document.getElementById('balance-button').addEventListener('click', getBalance);
 async function getBalance(blocks) {
-    const response = await fetch('https://localhost:3000/balance');
+    const response = await fetch('https://localhost:3001/balance');
     const data = await response.json();
     const timestampInit = 1725241389574;
     const timestamp = Date.now();
@@ -51,7 +51,7 @@ async function getBalance(blocks) {
     if (cumulativeTotal > 0) {
         const percent = (quokkasTotal / cumulativeTotal - 1) * 100;
         const percentBalance = quokkasTotal / cumulativeTotal;
-        const balance = data * 100000 * 4;
+        const balance = data * 1;
         document.getElementById('balance').textContent = `$${balance.toLocaleString('es-CO', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
         document.getElementById('quokkas').textContent = `${cumulativeTotal.toLocaleString('en-US', { minimumFractionDigits: 20, maximumFractionDigits: 20 })}`;
         document.getElementById('percent').textContent = `${percent.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}%`;
@@ -74,7 +74,7 @@ setInterval(async () => {
 
 async function getPublicKey() {
     try {
-        const response = await fetch('https://localhost:3000/public-key');
+        const response = await fetch('https://localhost:3001/public-key');
         if(!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -99,7 +99,7 @@ async function createTransaction(csrfToken) {
     try {
     	const recipient = document.getElementById('recipient').value;
     	const amount = parseFloat(document.getElementById('amount').value);
-        const response = await fetch('https://localhost:3000/transact', {
+        const response = await fetch('https://localhost:3001/transact', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -125,7 +125,7 @@ document.getElementById('network').addEventListener('click', async () => {
 });
 async function network(csrfToken) {
     try {
-        const response = await fetch('https://localhost:3000/network', {
+        const response = await fetch('https://localhost:3001/network', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -151,7 +151,7 @@ async function createItem(event) {
     const name = document.getElementById('name').value;
     const amount = parseInt(document.getElementById('amount').value);
     const seller = document.getElementById('seller').value;
-    const response = await fetch('https://localhost:3000/add-item', {
+    const response = await fetch('https://localhost:3001/add-item', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -164,7 +164,7 @@ async function createItem(event) {
 
 async function getItems() {
     try {
-        const response = await fetch('https://localhost:3000/items');
+        const response = await fetch('https://localhost:3001/items');
         const data = await response.json();
         displayItems(data);    
     } catch(error) {
@@ -253,7 +253,7 @@ async function filterBlocks() {
 async function displayAmountsByAddress(blocks) {
     const container = document.getElementById('grafica');
     container.innerHTML = ''; // Limpiar el contenido anterior
-    const response = await fetch('https://localhost:3000/public-key');
+    const response = await fetch('https://localhost:3001/public-key');
     const publicKey = await response.json();
 
     // const publicKey = '049766a7c1aee6c920cfd47ce3827e85f88b50768c24295d3bb0bc9301bb6801ad15c4e33fde05739afa77c4d88df5608e0c13f700358da4302307b6caa150da89049766a7c1aee6c920cfd47ce3827e85f88b50768c24295d3bb0bc9301bb6801ad15c4e33fde05739afa77c4d88df5608e0c13f700358da4302307b6caa150da89';
@@ -375,7 +375,7 @@ document.getElementById('buy').addEventListener('click', buyItem);
 async function buyItem(event) {
     event.preventDefault();
     const id = document.getElementById('id').value;
-    const response = await fetch('https://localhost:3000/buy-item', {
+    const response = await fetch('https://localhost:3001/buy-item', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -398,7 +398,7 @@ document.getElementById('startMining').addEventListener('click', async () => {
 
 async function startMining(csrfToken) {
     try {
-        const response = await fetch('https://localhost:3000/start-mining', {
+        const response = await fetch('https://localhost:3001/start-mining', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -429,7 +429,7 @@ document.getElementById('stopMining').addEventListener('click', async () => {
 async function stopMining(csrfToken) {
     clearInterval(miningInterval);
     try {
-        const response = await fetch('https://localhost:3000/stop-mining', {
+        const response = await fetch('https://localhost:3001/stop-mining', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -459,7 +459,7 @@ document.getElementById('newWallet').addEventListener('click', async () => {
 
 async function newWallet(csrfToken) {
     try {
-        const response = await fetch('https://localhost:3000/wallets', {
+        const response = await fetch('https://localhost:3001/wallets', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -481,7 +481,7 @@ async function newWallet(csrfToken) {
 async function updateProgressBar(blocks) {
     const progressBar = document.getElementById('progress-bar');
     progressBar.style.width = '0%';
-    const response = await fetch('https://localhost:3000/public-key');
+    const response = await fetch('https://localhost:3001/public-key');
     const publicKey = await response.json();
     let partialAmount = 0;
     const totalAmount = 1000000;
@@ -526,7 +526,7 @@ function resetProgressBar() {
 
 async function getTransactions() {
     try {
-        const response = await fetch('https://localhost:3000/transactions');
+        const response = await fetch('https://localhost:3001/transactions');
         const data = await response.json();
         displayTransactions(data);    
     } catch(error) {

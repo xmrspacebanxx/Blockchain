@@ -4,7 +4,7 @@ const fs = require('fs');
 const path = require('path');
 const Block = require('./Block');
 const os = require('os');
-const { amountBlocks}= require('./config');
+const { amountBlocks, blockchainName }= require('./config');
 
 
 class Blockchain{
@@ -138,7 +138,8 @@ class Blockchain{
 		const directory = os.homedir();
         //const directory = path.dirname(__filename); 
         //const filePath = path.join(directory, 'ONYXCHAIN6.json');
-        const filePath = path.join(directory, 'Bitcoin.json');
+        //const filePath = path.join(directory, 'Bitcoin.json');
+        const filePath = path.join(directory, blockchainName);
         if (!fs.existsSync(directory)) {
             fs.mkdirSync(directory, { recursive: true });
         }
@@ -153,7 +154,8 @@ class Blockchain{
 		const directory = os.homedir();
         //const directory = path.dirname(__filename);
         //const filePath = path.join(directory, 'ONYXCHAIN6.json');
-        const filePath = path.join(directory, 'Bitcoin.json');  
+        //const filePath = path.join(directory, 'Bitcoin.json');
+        const filePath = path.join(directory, blockchainName);  
         try {
             if (fs.existsSync(filePath)) {
                 //const encryptedData = fs.readFileSync(filePath, 'utf8');

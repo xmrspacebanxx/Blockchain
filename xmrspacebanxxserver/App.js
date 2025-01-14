@@ -1,21 +1,21 @@
-/*
+
 const express = require('express');
-const app = express();
-const cors = require('cors');
+//const app = express();
+//const cors = require('cors');
 
 const Blockchain = require('./Blockchain');
 const Wallet = require('./Wallet');
 const TransactionPool = require('./TransactionPool');
-const p2pServer = require('./p2pServer');
+//const p2pServer = require('./p2pServer');
 const Miner = require('./Miner');
 
-app.use(cors({ origin: 'http://r5yzdi2cr6jd3bdyxcx54py32ndqbbsjv6m7btgvjloscdpbksqrbcyd.onion' }));
+//app.use(cors({ origin: 'http://r5yzdi2cr6jd3bdyxcx54py32ndqbbsjv6m7btgvjloscdpbksqrbcyd.onion' }));
 
-const bc = Blockchain.loadBlockchain();
-const tp = new TransactionPool(bc);
-const server = new p2pServer(bc, tp);
+//const bc = Blockchain.loadBlockchain();
+//const tp = new TransactionPool(bc);
+//const server = new p2pServer(bc, tp);
 
-
+/*
 Wallet.loadWallet()
 	.then(wallet => {
 		console.log('Wallet succesfully loaded:', wallet);
@@ -44,10 +44,10 @@ Wallet.loadWallet()
 		console.error('Failed to load wallet:', error.message);
 		process.exit(1);
 	});
+*/
 
-	*/
 
-	const express = require('express');
+	//const express = require('express');
 	const path = require('path');
 	const https = require('https');
 	const fs = require('fs');
@@ -56,38 +56,38 @@ Wallet.loadWallet()
 	const csrf = require('csurf');
 	const cookieParser = require('cookie-parser');
 	
-	const Blockchain = require('../Blockchain/index');
+	//const Blockchain = require('./Blockchain');
 	
 	const P2pServer = require('./p2pServer');
-	const HTTP_PORT = process.env.HTTP_PORT || 3000;
+	const HTTP_PORT = process.env.HTTP_PORT || 3001;
 	const bodyParser = require('body-parser');
-	const Miner = require('../App/miner');
+	//const Miner = require('./Miner');
 	
 	const bc = Blockchain.loadBlockchain();
 	
 	const BigNumber = require('bignumber.js');
-	const Wallet  = require('../Wallet/index');
+	//const Wallet  = require('../Wallet/index');
 	
-	const WalletManager = require('../Wallet/walletManager');
-	const TransactionPool = require('../Wallet/transactions-pool');
-	const StorePool = require('../Marketplace/index');
-	const qrCode = require('../Wallet/qr-code');
+	//const WalletManager = require('../Wallet/walletManager');
+	//const TransactionPool = require('../Wallet/transactions-pool');
+	//const StorePool = require('../Marketplace/index');
+	//const qrCode = require('../Wallet/qr-code');
 	
-	const loadedWalletManager = WalletManager.loadWallets();
-	const walletManager = WalletManager.fromJSON(loadedWalletManager);
+	//const loadedWalletManager = WalletManager.loadWallets();
+	//const walletManager = WalletManager.fromJSON(loadedWalletManager);
 	
 	Wallet.loadWallet()
 		.then(wallet => {
 			console.log('Wallet successfully loaded:', wallet);
 	
 			const tp = new TransactionPool(bc);
-			const st = new StorePool();
-			const p2pServer = new P2pServer(bc, tp, st);
+			//const st = new StorePool();
+			const p2pServer = new P2pServer(bc, tp); //storepool ,st
 			const miner = new Miner(bc, tp, wallet, p2pServer);
 			
-			const tx = wallet.publicKey;
-			const fp = './public/images/pk.png';
-			const QR = new qrCode(tx, fp);
+			//const tx = wallet.publicKey;
+			//const fp = './public/images/pk.png';
+			//const QR = new qrCode(tx, fp);
 			
 			const app = express();
 			
@@ -107,8 +107,8 @@ Wallet.loadWallet()
 			const csrfProtection = csrf({ cookie: true});
 			app.use(csrfProtection);
 			
-			const privateKey = fs.readFileSync(path.resolve(__dirname, './certs/localhost.key'), 'utf8');
-			const certificate = fs.readFileSync(path.resolve(__dirname, './certs/localhost.crt'), 'utf8');
+			const privateKey = fs.readFileSync(path.resolve(__dirname, './public/localhost.key'), 'utf8');
+			const certificate = fs.readFileSync(path.resolve(__dirname, './public/localhost.crt'), 'utf8');
 			
 			const credentials = {
 				key: privateKey,
@@ -174,7 +174,7 @@ Wallet.loadWallet()
 			app.post('/address-balance', (req, res) => {
 				res.json(wallet.calculateBalance(bc, req.body.address));
 			});
-			
+			/*
 			app.post('/wallets', (req, res) => {
 				const newWallet = walletManager.newWallet();
 				res.status(201).json(newWallet);
@@ -211,13 +211,14 @@ Wallet.loadWallet()
 				} catch (error) {
 					res.status(400).json({ status: error.message });
 				}
-			});
+			});*/
 			
 			httpsServer.listen(HTTP_PORT, ()=>{
 				console.log('HTTP server listening on port ' + HTTP_PORT);
 			});
 			
 			p2pServer.listen();
+			
 		})
 		.catch(error => {
 			console.error('Failed to load wallet:', error.message);
@@ -229,4 +230,4 @@ Wallet.loadWallet()
 
 
 
-
+//Oandresjuridicos1982@gmail.com

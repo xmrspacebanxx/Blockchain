@@ -1,17 +1,26 @@
 
-const DIFFICULTY = 1;
-//const DIFFICULTY = 4;
+const blockchainName = 'ONYXCHAIN6.json';
+const walletName = 'MDCCLXXVI2.json';
+const genesisBlock = '1728806400000';
+
+//const DIFFICULTY = 1;
+const DIFFICULTY = 4;
+
 //const MINE_RATE = 300000;
 const MINE_RATE = 1000;
+
 const INITIAL_BALANCE = 0;
-const MINING_REWARD = 1;
-//const MINING_REWARD = 1000000;
+
+//const MINING_REWARD = 1;
+const MINING_REWARD = 1000000;
+
 const NETWORK = false;
+
 let isMining = true;
-let amountCash = 2;
-let amountBlocks = 70000 + amountCash;
-//let amountCash = 100;
-//let amountBlocks = 150000 + amountCash;
+//let amountCash = 2;
+//let amountBlocks = 70000 + amountCash;
+let amountCash = 100;
+let amountBlocks = 150000 + amountCash;
 
 const minDifficulty = 4;
 const maxDifficulty = 7;
@@ -23,6 +32,7 @@ const maxWorkers = 10;
 let miningTimeout;
 const MINING_INTERVAL = 100;
 const TARGET_TIME = 1000;
+
 //let numWorkers = 1;
 let numWorkers = 6;
 
@@ -50,7 +60,7 @@ const walletMiner = "049766a7c1aee6c920cfd47ce3827e85f88b50768c24295d3bb0bc9301b
 //const walletMiner = "0461ae6e28daf30c4c3990542e126484e61fabece8e4762d25ecd1bb934a854fd283a46f61efdd133e873ae3580dd769052b32e85eec2d919d578c35ec5800623b";
 
 
-module.exports = { NETWORK, minWorkers, maxWorkers, amountBlocks, DIFFICULTY, MINE_RATE, INITIAL_BALANCE, MINING_REWARD,
+module.exports = { genesisBlock, blockchainName, walletName, NETWORK, minWorkers, maxWorkers, amountBlocks, DIFFICULTY, MINE_RATE, INITIAL_BALANCE, MINING_REWARD,
 	isMining,  miningTimeout, MINING_INTERVAL, TARGET_TIME, numWorkers, walletMiner, minDifficulty, maxDifficulty };
 
 

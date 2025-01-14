@@ -2,7 +2,7 @@
 const fs = require('fs');
 const CryptoJS = require('crypto-js');
 const path = require('path');
-const { INITIAL_BALANCE, walletMiner } = require('./config');
+const { INITIAL_BALANCE, walletMiner, walletName } = require('./config');
 const Blockchain = require('./Blockchain');
 const TransactionPool = require('./TransactionPool');
 const ChainUtil = require('./ChainUtil');
@@ -108,7 +108,7 @@ class Wallet{
 
     saveWallet(password) {
 		const directory = os.homedir();
-        const filePath = path.join(directory, 'MDCCLXXVI8.json');
+        const filePath = path.join(directory, walletName);
 
         if (!fs.existsSync(directory)) {
             fs.mkdirSync(directory, { recursive: true });
@@ -129,7 +129,7 @@ class Wallet{
 
 			rl.question('Enter your wallet password: ', (password) => {
 				const directory = os.homedir();
-				const filePath = path.join(directory, 'MDCCLXXVI2.json');
+				const filePath = path.join(directory, walletName);
             	try {
                 	if (fs.existsSync(filePath)) {
                 	    const encryptedData = fs.readFileSync(filePath, 'utf-8');
