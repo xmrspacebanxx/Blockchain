@@ -121,7 +121,7 @@ class Blockchain{
         } 
         console.log('Replacing the received chain...');
         this.chain = newChain;
-        this.saveBlockchain();
+        //this.saveBlockchain();
     }
 
     toJSON() {
@@ -136,10 +136,11 @@ class Blockchain{
 
     saveBlockchain() {
 		const directory = os.homedir();
-        //const directory = path.dirname(__filename); 
+        //const directory2 = path.dirname(__filename); 
         //const filePath = path.join(directory, 'ONYXCHAIN6.json');
         //const filePath = path.join(directory, 'Bitcoin.json');
         const filePath = path.join(directory, blockchainName);
+        //const filePath2 = path.join(directory2, blockchainName);
         if (!fs.existsSync(directory)) {
             fs.mkdirSync(directory, { recursive: true });
         }
@@ -147,6 +148,7 @@ class Blockchain{
 		//CryptoJS.AES.encrypt(JSON.stringify(this.toJSON()),"MDCCLXXVI").toString();
         //fs.writeFileSync(filePath, encrypted);
 		fs.writeFileSync(filePath, JSON.stringify(this.chain, null, 2));
+        //fs.writeFileSync(filePath2, JSON.stringify(this.chain, null, 2));
         console.log('Blockchain saved to disk.');
     }
 

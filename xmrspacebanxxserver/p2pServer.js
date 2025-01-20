@@ -10,9 +10,9 @@ const { NETWORK } = require('./config');
 
 // const credentials = { key: miPrivateKey, cert: certificate, ca: ca }; 
 
-//const peers = ["wss://xmrspacebanxx.com:5006"];
-const peers = process.env.PEERS ? process.env.PEERS.split(',') : [];
-const P2P_PORT = process.env.P2P_PORT || 3000;
+const peers = ["wss://xmrspacebanxx.com:5006"];
+//const peers = process.env.PEERS ? process.env.PEERS.split(',') : [];
+const P2P_PORT = process.env.P2P_PORT || 3001;
 
 const MESSAGE_TYPES = {
     chain: 'CHAIN',
@@ -63,7 +63,7 @@ class p2pServer{
             console.log('[+] Attempting to reconnect to peer...');
             this.connectToPeers();
             this.network = false;
-        }, 600000);
+        }, 1000);
     }
 
     connectSocket(socket) {
