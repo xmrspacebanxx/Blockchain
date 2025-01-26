@@ -1,18 +1,17 @@
 
 const webSocket = require('ws');
 const { NETWORK } = require('./config');
-// const fs = require('fs');
-// const https = require('https');
+const fs = require('fs');
+const https = require('https');
 
-// const miPrivateKey = fs.readFileSync('privkey.pem', 'utf8');
-// const certificate = fs.readFilesSync('cert.pem', 'utf8');
-// const ca = fs.readFilesSync('chain.pem', 'utf8');
+const options = {
+    key: fs.readFileSync('./privkey.pem'),
+    cert: fs.readFileSync('./fullchain.pem'),
+   };
 
-// const credentials = { key: miPrivateKey, cert: certificate, ca: ca }; 
-
-const peers = ["wss://xmrspacebanxx.com:5006"];
-//const peers = process.env.PEERS ? process.env.PEERS.split(',') : [];
-const P2P_PORT = process.env.P2P_PORT || 3001;
+//const peers = ["wss://xmrspacebanxx.com:5001"];
+const peers = process.env.PEERS ? process.env.PEERS.split(',') : [];
+const P2P_PORT = process.env.P2P_PORT || 5007;
 
 const MESSAGE_TYPES = {
     chain: 'CHAIN',
@@ -29,13 +28,13 @@ class p2pServer{
     }
 
     listen(){
-        //const httpsServer = https.createServer(credentials);
-        //const server = new webSocket.Server({server : httpsServer});
-        const server = new webSocket.Server({port : P2P_PORT});
+        const httpsServer = https.createServer(options);
+        const server = new webSocket.Server({server : httpsServer});
+        //const server = new webSocket.Server({port : P2P_PORT});
         server.on('connection', socket => this.connectSocket(socket));
-        //httpsServer.listen(P2P_PORT, () => {
-        //    console.log('Listen for secure peer-to-peer conections on port' + P2P_PORT);
-        //});
+        httpsServer.listen(P2P_PORT, '0.0.0.0', () => {
+            console.log('Listen for secure peer-to-peer conections on port' + P2P_PORT);
+        });
         this.connectToPeers();
     }
 
@@ -63,7 +62,7 @@ class p2pServer{
             console.log('[+] Attempting to reconnect to peer...');
             this.connectToPeers();
             this.network = false;
-        }, 1000);
+        }, 10000);
     }
 
     connectSocket(socket) {

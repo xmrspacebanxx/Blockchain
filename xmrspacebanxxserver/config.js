@@ -1,14 +1,14 @@
 
-const blockchainName = 'BETO';
+//const blockchainName = 'BETO';
 //const blockchainName = 'ONYXCHAIN6.json';
-//const blockchainName = 'QuokkaCoin.json';
+const blockchainName = 'QuokkaCoin.json';
 const walletName = 'MDCCLXXVI.json';
-const genesisBlock = '1728806400000';
-//const genesisBlock = 'Quokka Coin 🌱';
+//const genesisBlock = '1728806400000';
+const genesisBlock = 'Quokka Coin 🌱';
 
 //const DIFFICULTY = 1;
-const DIFFICULTY = 4;
-//const DIFFCULTY = 7;
+//const DIFFICULTY = 4;
+const DIFFICULTY = 7;
 
 //const MINE_RATE = 300000;
 const MINE_RATE = 1000;
@@ -16,30 +16,33 @@ const MINE_RATE = 1000;
 const INITIAL_BALANCE = 0;
 
 //const MINING_REWARD = 1;
-const MINING_REWARD = 1000000;
-//const MINING_REWARD = 6;
+//const MINING_REWARD = 1000000;
+const MINING_REWARD = 6;
 
-const NETWORK = false;
+const NETWORK = true;
 
-//let isMining = true;
+let isMining = true;
 //let amountCash = 2;
 //let amountBlocks = 70000 + amountCash;
-let amountCash = 10;
-let amountBlocks = 170000 + amountCash;
+//let amountCash = 0;
+//let amountBlocks = 180000 + amountCash;
+let amountCash = 100;
+let amountBlocks = 3000 + amountCash;
 
-const minDifficulty = 4;
+//const minDifficulty = 4;
+//const maxDifficulty = 7;
+const minDifficulty = 6;
 const maxDifficulty = 7;
 
 const minWorkers = 4;
-const maxWorkers = 10;
+const maxWorkers = 17;
 
-let isMining = false;
 let miningTimeout;
-const MINING_INTERVAL = 100;
+const MINING_INTERVAL = 1000;
 const TARGET_TIME = 1000;
 
 //let numWorkers = 1;
-let numWorkers = 6;
+let numWorkers = 17;
 
 //400 $76100 45000
 const walletMiner = "049766a7c1aee6c920cfd47ce3827e85f88b50768c24295d3bb0bc9301bb6801ad15c4e33fde05739afa77c4d88df5608e0c13f700358da4302307b6caa150da89";

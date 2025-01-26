@@ -34,8 +34,11 @@ class Block {
         const nonce = 0;
         const difficulty = DIFFICULTY;
         const data = [];
+        //const hash = Block.hash(timestamp, lastHash, data, nonce, difficulty);
+        //return new this(timestamp, lastHash, hash, data, nonce, difficulty, 0);
         const hash = Block.hash(timestamp, lastHash, data, nonce, difficulty);
-        return new this(timestamp, lastHash, hash, data, nonce, difficulty, 0);
+        return new this(timestamp, lastHash, '0'.repeat(difficulty) + 
+			hash.substring(difficulty), data, nonce, difficulty, 0);
     }
 
 

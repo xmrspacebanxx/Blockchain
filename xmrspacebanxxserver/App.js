@@ -10,6 +10,7 @@ const p2pServer = require('./p2pServer');
 const Miner = require('./Miner');
 
 //app.use(cors({ origin: 'http://r5yzdi2cr6jd3bdyxcx54py32ndqbbsjv6m7btgvjloscdpbksqrbcyd.onion' }));
+app.use(cors({ origin: 'https://xmrspacebanxx.com:5001' }));
 
 const bc = Blockchain.loadBlockchain();
 const tp = new TransactionPool(bc);
