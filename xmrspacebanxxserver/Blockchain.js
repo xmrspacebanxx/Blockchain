@@ -136,7 +136,7 @@ class Blockchain{
 
     saveBlockchain() {
 		const directory = os.homedir();
-        //const directory2 = path.dirname(__filename); 
+        //const directory = path.dirname(__filename); 
         //const filePath = path.join(directory, 'ONYXCHAIN6.json');
         //const filePath = path.join(directory, 'Bitcoin.json');
         const filePath = path.join(directory, blockchainName);
