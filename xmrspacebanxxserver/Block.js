@@ -1,6 +1,6 @@
 
 const ChainUtil = require('./ChainUtil');
-const {DIFFICULTY, MINE_RATE, minDifficulty, maxDifficulty, genesisBlock} = require('./config');
+const {DIFFICULTY, MINE_RATE, minDifficulty, maxDifficulty, genesisBlock, TARGET_TIME} = require('./config');
 
 class Block {
 
@@ -84,13 +84,41 @@ class Block {
         return '0'.repeat(difficulty) + hash.substring(difficulty);
     }
 
+    static getTarget(difficulty) {
+        return BigInt("0xffff" + "0".repeat(60)) / BigInt(2 ** difficulty);
+    }
+
+    static isValidHash(hash, difficulty) {
+        return BigInt("0x" + hash) < Block.getTarget(difficulty);
+    }
+
     static adjustDifficulty(lastBlock, currentTime){
         let { difficulty } = lastBlock;
-        difficulty = lastBlock.timestamp + MINE_RATE > currentTime ? difficulty + 1: difficulty - 1;
+        const timeTaken = lastBlock.timestamp - 1740417285697;//genesisBlock;
+        const expectedTime = TARGET_TIME;
+
+        let newDifficulty = lastBlock.difficulty * (expectedTime / timeTaken);
+        return Math.min(Math.max(Math.round(newDifficulty), minDifficulty), maxDifficulty);
+
+        //difficulty = lastBlock.timestamp + MINE_RATE > lastBlock.timestamp + currentTime ? difficulty + 1: difficulty - 1;
         //return Math.max(difficulty, 1);
         //return Math.max(difficulty, 4);
-        return Math.min(Math.max(difficulty, minDifficulty), maxDifficulty);
+        //return Math.min(Math.max(difficulty, minDifficulty), maxDifficulty);
     }
+/*
+    static adjustDifficulty(blockchain, currentTime){
+        const lastBlock = blockchain.chain[blockchain.chain.length - 1];
+        const lengthBlock = blockchain.chain[blockchain.chain.length];
+
+        if (lengthBlock % 2016 !== 0) return lastBlock.difficulty;
+
+        const firstBlock = lengthBlock - 2016;
+        const timeTaken = lastBlock.timestamp - firstBlock.timestamp;
+        const expectedTime = 2016 * 10 * 60 * 1000;
+
+        let newDifficulty = lastBlock.difficulty * (expectedTime / timeTaken);
+        return Math.min(Math.max(Math.round(newDifficulty), minDifficulty), maxDifficulty);
+    }*/
 }
 
 module.exports = Block;

@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Progreso de Minado</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 30px;
+            background-color: #111;
+            color: white;
+        }
+
+        #progress-container {
+            width: 100%;
+            background-color: #222;
+            border: 1px solid #444;
+            border-radius: 5px;
+            overflow: hidden;
+            height: 25px;
+            position: relative;
+        }
+
+        #progress-bar {
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(90deg, #4caf50, #8bc34a);
+            transition: width 0.3s ease-in-out;
+        }
+
+        #progress-text {
+            position: absolute;
+            width: 100%;
+            text-align: center;
+            font-size: 14px;
+            font-weight: bold;
+            color: white;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Progreso de Minado</h2>
+    <p>Objetivo: 1,000,000 bloques</p>
+
+    <div id="progress-container">
+        <div id="progress-bar"></div>
+        <span id="progress-text">0%</span>
+    </div>
+
+    <script>
+        const totalBlocks = 1000000; // Meta total de bloques
+        let currentBlocks = 0; // Bloques actuales
+        let targetBlocks = 0; // Bloques reales desde el servidor
+
+        // Función para obtener la cantidad de bloques minados desde el servidor
+        async function fetchBlockCount() {
+            try {
+                const response = await fetch('http://localhost:3001/blocks'); // Obtiene bloques del servidor
+                const data = await response.json();
+                targetBlocks = data.blocks; // Asigna el valor recibido
+            } catch (error) {
+                console.warn('No se pudo obtener datos del servidor, usando simulación.');
+                targetBlocks += Math.floor(Math.random() * 5000); // Simulación
+            }
+        }
+
+        // Función para actualizar la barra de progreso
+        function updateProgress() {
+            if (currentBlocks < targetBlocks) {
+                currentBlocks += Math.ceil((targetBlocks - currentBlocks) * 0.05); // Suaviza el progreso
+            }
+
+            let progress = (currentBlocks / totalBlocks) * 100;
+            progress = Math.min(progress, 100); // Límite al 100%
+
+            document.getElementById('progress-bar').style.width = progress + '%';
+            document.getElementById('progress-text').textContent = `Bloques: ${currentBlocks.toLocaleString()} (${progress.toFixed(2)}%)`;
+
+            requestAnimationFrame(updateProgress);
+        }
+
+        // Inicia la actualización
+        async function startProgress() {
+            await fetchBlockCount();
+            updateProgress();
+            setInterval(fetchBlockCount, 5000); // Llama a la API cada 5 segundos
+        }
+
+        startProgress();
+    </script>
+
+</body>
+</html>

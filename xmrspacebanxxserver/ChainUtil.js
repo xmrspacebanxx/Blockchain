@@ -25,6 +25,15 @@ class ChainUtil{
 	static hash(data){
 		try {
 			return SHA256(JSON.stringify(data)).toString();
+			//return SHA256(SHA256(JSON.stringify(data)).toString()).toString();
+		} catch (error) {
+			return null;
+		}
+	}
+
+	static doubleHash(data){
+		try {
+			return SHA256(SHA256(JSON.stringify(data)).toString()).toString();
 		} catch (error) {
 			return null;
 		}
@@ -45,6 +54,8 @@ class ChainUtil{
 			return null;
 		}
 	}
+
+	
 }
 
 module.exports = ChainUtil;

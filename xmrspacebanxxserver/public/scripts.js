@@ -1,3 +1,4 @@
+const price = 4000;
 
 function home(){
     const condition = true;
@@ -105,11 +106,132 @@ async function getBlocks() {
     }
 }
 
+
+document.getElementById('balance-button').addEventListener('click', getBalance);
+
 async function getBalance() {
+    try {
+
     const response = await fetch('http://localhost:3001/balance');
     const data = await response.json();
-    document.getElementById('balance').textContent = JSON.stringify(data, null, 2);
+    const balanceEnDolares = new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD'
+    }).format(data.balance);
+    document.getElementById('balance').textContent = `US${balanceEnDolares}`;
+    } catch (error) {
+        console.error('Error fetching balance:', error);
+        document.getElementById('balance').textContent = 'Error loading balance. Please try again later.';
+    }
 }
+
+getBalance();
+
+document.addEventListener("DOMContentLoaded", function () {
+    const boton = document.getElementById("boton");
+    const mensaje = document.getElementById("mensaje");
+
+    boton.addEventListener("click", function () {
+        mensaje.textContent = "¡Has hecho clic!";
+    });
+});
+
+async function fetchBitcoinPrice() {
+    try {
+        const response = await fetch('http://localhost:3001/price')
+        const data = await response.json();
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        document.getElementById('price').textContent = data.toLocaleString('es-CO', { style: 'currency', currency: 'COP' });
+    } catch (error) {
+        document.getElementById('price').textContent = '$4.000,00';
+    }
+}
+
+//kr33 18-33
+
+fetchBitcoinPrice();
+
+
+async function getPublicKey() {
+    try {
+        const response = await fetch('http://localhost:3001/public-key');
+        if(!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        const reducedData = data.substring(0, 18) + '...';
+        document.getElementById('public-key').textContent = `Public Key: ${reducedData}`;
+        return reducedData;
+    } catch (error) {
+        console.error('Error fetching public key:', error);
+        document.getElementById('public-key').textContent = 'Error loading public key. Please try again later.';    
+    }
+}
+
+getPublicKey();
+
+async function getPrivateKey() {
+    try {
+        const response = await fetch('http://localhost:3001/private-key');
+        if(!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        const reducedData = data.substring(0, 18) + '...';
+        document.getElementById('private-key').textContent = `Private Key: ${reducedData}`;
+        return reducedData;
+    } catch (error) {
+        console.error('Error fetching private key:', error);
+        document.getElementById('private-key').textContent = 'Error loading private key. Please try again later.';
+    }
+}
+
+getPrivateKey();
+
+async function getAdress() {
+    try {
+        const response = await fetch('http://localhost:3001/address');
+        if(!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        document.getElementById('address').textContent = `Token: ${data}`;
+        return data;
+    } catch (error) {
+        console.error('Error fetching address:', error);
+        document.getElementById('address').textContent = 'Error loading address. Please try again later.';    
+    }
+}
+
+getAdress();
+
+async function getCOPBalance() {
+    try {
+        const response = await fetch('http://localhost:3001/balance');
+        const response2 = await fetch('http://localhost:3001/price');
+        if(!response.ok || !response2.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        const data2 = await response2.json();
+        const total = data.balance * data2;
+        const balanceEnCOP = new Intl.NumberFormat('es-CO', {
+            style: 'currency',
+            currency: 'COP'
+        }).format(total);
+        document.getElementById('balanceCOP').textContent = `TOTAL: ${balanceEnCOP}COP`;
+        return balanceEnCOP;
+    } catch (error) {
+        console.error('Error fetching balance:', error);
+        document.getElementById('balanceCOP').textContent = 'Error loading balance. Please try again later.';
+
+    }
+}
+
+getCOPBalance();
+
 
 async function createTransaction(event) {
     event.preventDefault();
@@ -178,6 +300,7 @@ function displayItems(items) {
 
 getItems();
 
+/*
 function displayBlocks(blocks) {
     const container = document.getElementById('blocks');
     container.innerHTML = '';
@@ -220,6 +343,23 @@ function displayBlocks(blocks) {
         container.appendChild(blockElement);
     });
 }
+*/
+
+function displayBlocks(blocks) {
+    const container = document.getElementById('blocks');
+    container.innerHTML = '';
+    blocks.forEach(block => {
+        const blockElement = document.createElement('div');
+        blockElement.classList.add('block');
+        blockElement.innerHTML = `
+        
+            <div class="crypto-info">
+                <div class="crypto-name">Hash: ${block.hash}</div>
+            </div>
+        `;
+        container.appendChild(blockElement);
+    });
+}
 
 async function filterBlocks() {
     const address = document.getElementById('address-input').value;
@@ -249,6 +389,8 @@ async function buyItem(event) {
     document.getElementById('buy').textContent = data;
 }
 
+document.getElementById('start-button').addEventListener('click', startMining);
+
 let miningInterval;
 const MINING_SPEED = 50; // Velocidad de la barra de progreso (menor es más rápido)
 
@@ -273,6 +415,8 @@ async function startMining() {
     }
 }
 
+document.getElementById('stop-button').addEventListener('click', stopMining);
+
 async function stopMining() {
     clearInterval(miningInterval);
     try {
@@ -294,25 +438,45 @@ async function stopMining() {
     }
 }
 
-function updateProgressBar() {
-    const progressBar = document.getElementById('progress-bar');
-    progressBar.style.width = '0%';
 
-    let width = 0;
-    miningInterval = setInterval(() => {
-        if (width >= 100) {
-            width = 0; // Reset the width when it reaches 100%
-        } else {
-            width += 1; // Increment the width
+async function updateProgressBar() {
+    const progressBar = document.getElementById('progress-bar');
+
+    const totalAmount = 1000000; // Límite de bloques
+
+    try {
+        // 📌 Obtener el número de bloques desde la API
+        //const response = await fetch('http://localhost:3001/block-count');
+        //const data = await response.json();
+        let partialAmount = 100000; // Número de bloques actuales
+
+        if (partialAmount <= 0) {
+            console.error('Error: El número de bloques debe ser mayor que cero.');
+            return;
         }
-        progressBar.style.width = width + '%';
-    }, MINING_SPEED); // Update the progress bar based on the mining speed
+
+        // 📌 Calcular el porcentaje
+        let progress = (partialAmount / totalAmount) * 100;
+        progress = Math.min(progress, 100); // Evita que pase del 100%
+
+        // 📌 Actualizar la barra de progreso
+        progressBar.style.width = progress + '%';
+
+    } catch (error) {
+        console.error('Error al obtener el número de bloques:', error);
+    }
 }
+
+// 📌 Llamar la función al inicio para cargar el progreso actual
+updateProgressBar();
+
+
 
 function resetProgressBar() {
     const progressBar = document.getElementById('progress-bar');
     progressBar.style.width = '0%';
 }
+
 
 async function getTransactions() {
     try {
@@ -351,8 +515,10 @@ function displayTransactions(transactions) {
     });
 }
 
+displayTransactions();
 
-const API_URL = 'http://localhost:3000';
+
+const API_URL = 'http://localhost:3001';
 
 // Fetch available items and populate the list
 function loadAvailableItems() {

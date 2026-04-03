@@ -1,6 +1,6 @@
 
 const { Worker } = require('worker_threads');
-let { isMining, miningTimeout, numWorkers } = require('./config');
+let { difficulty, isMining, miningTimeout, numWorkers } = require('./config');
 const { MINING_INTERVAL, TARGET_TIME, amountBlocks, minWorkers, maxWorkers } = require('./config');
 const Transaction = require("./Transaction");
 const { exec } = require('child_process');
@@ -46,6 +46,7 @@ class Miner {
                         this.transactionPool.clearTransactions(transactions);
                         this.p2pServer.broadcastClearTransactions();
                         this.adjustWorkers(block.processTime);
+                        this.blockchain.saveBlockchain();
                         console.log('\x1b[32m%s\x1b[0m','Work finished...');
                         if ( amountBlocks === indexBlock) {
                             this.stopMining();

@@ -18,8 +18,7 @@ class Blockchain{
     }
 
     getBlockIndex(){
-        const blockIndex = this.chain.length;
-        return blockIndex;
+        return this.chain[this.chain.length];
     }
 
     addBlock(newBlock){
@@ -105,6 +104,10 @@ class Blockchain{
             }
             if (block.nonce === this.chain.nonce){
                 console.log('\x1b[31m%s\x1b[0m', `Invalid nonce at block ${i}`);
+                return false;
+            }
+            if (block.hash === Block.isValidHash(block.hash, block.difficulty)) {
+                console.log('\x1b[31m%s\x1b[0m', `Invalid hash at block ${i}`);
                 return false;
             }
         }

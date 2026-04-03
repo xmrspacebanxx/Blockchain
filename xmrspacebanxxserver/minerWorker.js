@@ -12,3 +12,7 @@ Block.mineBlock(lastBlock, transactions, nonceStart, nonceEnd, controlFlag)
 	.catch(err => {
 		parentPort.postMessage(null);
 	});
+
+parentPort.on('message', ({nonce, hash}) => {
+	console.log(`Nonce: ${nonce}, Hash: ${hash}`);
+});

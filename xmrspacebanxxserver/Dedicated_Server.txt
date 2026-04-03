@@ -1,0 +1,10 @@
+Dedicated_Server.txt
+[2026-03-27 21:26:27:106 INFO] Starting Server
+[2026-03-27 21:26:27:106 INFO] Version: 1.26.11.1
+[2026-03-27 21:26:27:106 INFO] Session ID: 4a177fe9-41ac-4234-a31f-70e4126a6d04
+[2026-03-27 21:26:27:106 INFO] Build ID: 42641806
+[2026-03-27 21:26:27:106 INFO] Branch: hotfix/26_u1_h1
+[2026-03-27 21:26:27:106 INFO] Commit ID: 5557b51c31f30d28e93ddeeb2282f77c75af2b95
+[2026-03-27 21:26:27:106 INFO] Configuration: Publish
+[2026-03-27 21:26:27:106 ERROR] Error opening file: server.properties
+[2026-03-27 21:26:27:106 INFO] Server stop requested.
